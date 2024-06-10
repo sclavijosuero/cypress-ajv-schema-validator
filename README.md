@@ -245,6 +245,48 @@ describe('API Schema Validation Function', () => {
 });
 ```
 
+## Validation Results
+
+Here are some screenshots of schema validation tests run in Cypress.
+
+### Test Passed
+
+![Test Passed](images/pass1.png)
+
+### Test Failed
+
+#### Overview of Errors
+
+![Test Failed Overview](images/error11.png)
+
+In the Cypress log, the number of errors is summarized, and the schema validation errors are listed in AJV format. Missing fields in the validated data are shown with the symbol 🗑️, and the rest of the errors with the symbol 👉.
+
+#### Detailed Error View
+
+![Test Failed Details](images/error12.png)
+
+When clicking on the summary line, the number of errors, the full list of errors in AJV format, and a view of the validated data indicating the errors in a user-friendly format are shown.
+
+### Test Failed with More than 10 Errors
+
+#### Overview with More Errors
+
+![Test Failed Many Errors](images/error21.png)
+
+At the end of the list of individual errors, a line "...and N more errors." is shown.
+
+#### Error Details in Console
+
+![Error Details in Console](images/error22.png)
+
+When clicking the summary line in the Cypress log, the error details are shown in the console.
+
+#### More Errors in Console
+
+![More Errors in Console](images/error23.png)
+
+When clicking on the "...and N more errors." line in the Cypress log, additional error details are shown in the console.
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
