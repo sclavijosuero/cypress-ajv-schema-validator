@@ -1,0 +1,35 @@
+[
+  {
+    "id": "890e4567-e89b-12d3-a456-426614174002",
+    "description": "New Service 2 Entry - item 1",
+    "createdDate": "2023-01-02T12:00:00Z",
+    "priority": 3,
+    "completed": true,
+    "details": {
+      "detail1": "New detail 1 - item 1",
+      "detail2": 789
+    }
+  },
+  {
+    "id": "901e4567-e89b-12d3-a456-426614174005",
+    "description": "New Service 2 Entry - item 2",
+    "createdDate": "2023-01-12T12:00:00Z",
+    "priority": 2,
+    "completed": false,
+    "details": {
+      "detail1": "New detail 1 - item 2",
+      "detail2": 260
+    }
+  },
+  {
+    "id": "912e4567-e89b-12d3-a456-426614174006",
+    "description": "New Service 2 Entry - item 3",
+    "createdDate": "2023-01-15T12:00:00Z",
+    "priority": 1,
+    "completed": false,
+    "details": {
+      "detail1": "New detail 1 - item 3",
+      "detail2": 340
+    }
+  }
+]

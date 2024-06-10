@@ -1,0 +1,22 @@
+[
+    {
+      "id": 54321,
+      "description": null,
+      "createdDate": 20230101,
+      "priority": "high",
+      "completed": "no",
+      "details": {
+        "detail1": 123,
+        "detail2": "one-two-three"
+      }
+    },
+    {
+      "description": "Missing ID and createdDate",
+      "completed": true,
+      "priority": null,
+      "details": {
+        "detail1": null,
+        "detail2": 456
+      }
+    }
+]

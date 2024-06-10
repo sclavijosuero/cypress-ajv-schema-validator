@@ -1,0 +1,15 @@
+{
+    "id": 67890,
+    "name": 123,
+    "status": null,
+    "email": "not-an-email",
+    "createdAt": 20230102,
+    "isActive": "no",
+    "age": 25,
+    "tags": ["tagA", null, false],
+    "preferences": {
+      "notifications": false,
+      "theme": null,
+      "itemsPerPage": "fifteen"
+    }
+}

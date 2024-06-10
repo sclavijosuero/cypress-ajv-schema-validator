@@ -1,0 +1,15 @@
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "name": "John Doe",
+  "status": "active",
+  "email": "john.doe@example.com",
+  "createdAt": "2023-01-01T12:00:00Z",
+  "isActive": true,
+  "age": 30,
+  "tags": ["tag1", "tag2", "tag3"],
+  "preferences": {
+    "notifications": true,
+    "theme": "dark",
+    "itemsPerPage": 20
+  }
+}

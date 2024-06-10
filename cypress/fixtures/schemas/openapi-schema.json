@@ -1,0 +1,321 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Example API",
+    "version": "1.0.0",
+    "description": "An example API with GET and POST methods."
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com"
+    }
+  ],
+  "paths": {
+    "/service1": {
+      "get": {
+        "summary": "Get details for service 1",
+        "operationId": "getService1",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service1Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new entry for service 1",
+        "operationId": "createService1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service1Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service1Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service2": {
+      "get": {
+        "summary": "Get details for service 2",
+        "operationId": "getService2",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Service2Response"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new entry for service 2",
+        "operationId": "createService2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service2Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Service2Response"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Service1Response": {
+        "type": "object",
+        "required": ["id", "name", "status", "createdAt", "isActive", "age"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": false
+          },
+          "status": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "age": {
+            "type": "integer",
+            "nullable": false
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferences": {
+            "$ref": "#/components/schemas/Preferences"
+          }
+        }
+      },
+      "Service1Request": {
+        "type": "object",
+        "required": ["name", "status", "createdAt", "isActive", "age"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": false
+          },
+          "status": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "age": {
+            "type": "integer",
+            "nullable": false
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        }
+      },
+      "Service2Response": {
+        "type": "object",
+        "required": ["id", "description", "createdDate", "priority", "completed"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string",
+            "nullable": false
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "priority": {
+            "type": "integer",
+            "nullable": false
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "detail1": {
+                "type": "string",
+                "nullable": true
+              },
+              "detail2": {
+                "type": "integer"
+              }
+            },
+            "required": ["detail2"]
+          }
+        }
+      },
+      "Service2Request": {
+        "type": "object",
+        "required": ["description"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Preferences": {
+        "type": "object",
+        "properties": {
+          "notifications": {
+            "type": "boolean"
+          },
+          "theme": {
+            "type": "string",
+            "nullable": true
+          },
+          "itemsPerPage": {
+            "type": "integer"
+          }
+        }
+      },
+      "Meta": {
+        "type": "object",
+        "required": ["createdBy", "createdDate"],
+        "properties": {
+          "createdBy": {
+            "type": "string",
+            "nullable": false
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+[
+    {
+        "id": 123456,
+        "age": "thirty",
+        "email": "invalid-email-format",
+        "created_at": "not-a-date",
+        "is_active": "yes",
+        "tags": ["developer", 123],
+        "address": {
+            "street": 789,
+            "city": "Anytown"
+        },
+        "preferences": {
+            "notifications": "yes",
+            "theme": "dark",
+            "items_per_page": "unknown"
+        }
+    },
+    {
+        "id": "223e4567-e89b-12d3-a456-426614174001",
+        "name": null,
+        "age": 35,
+        "email": "jane.smith@example",
+        "created_at": null,
+        "is_active": false,
+        "tags": ["manager", false],
+        "address": {
+            "street": "456 Elm St",
+            "postal_code": "67890"
+        },
+        "preferences": {
+            "notifications": false,
+            "theme": null,
+            "items_per_page": 10
+        }
+    },
+    {
+        "id": null,
+        "name": "Alice Johnson",
+        "age": null,
+        "email": "alice.johnson@example.com",
+        "created_at": "2023-03-10",
+        "is_active": "yes",
+        "tags": null,
+        "address": {
+            "street": "789 Oak St",
+            "postal_code": "10112"
+        },
+        "preferences": {
+            "notifications": true,
+            "theme": "light",
+            "items_per_page": "fifteen"
+        }
+    }
+]

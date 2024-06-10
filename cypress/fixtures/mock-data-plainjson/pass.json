@@ -1,0 +1,59 @@
+[
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "John Doe",
+      "age": 30,
+      "email": "john.doe@example.com",
+      "created_at": "2023-01-01T12:00:00Z",
+      "is_active": true,
+      "tags": ["developer", "tester"],
+      "address": {
+        "street": "123 Main St",
+        "city": "Anytown",
+        "postal_code": "12345"
+      },
+      "preferences": {
+        "notifications": true,
+        "theme": "dark",
+        "items_per_page": 20
+      }
+    },
+    {
+      "id": "223e4567-e89b-12d3-a456-426614174001",
+      "name": "Jane Smith",
+      "age": 28,
+      "email": "jane.smith@example.com",
+      "created_at": "2023-02-15T08:30:00Z",
+      "is_active": false,
+      "tags": ["manager", "designer"],
+      "address": {
+        "street": "456 Elm St",
+        "city": "Othertown",
+        "postal_code": "67890"
+      },
+      "preferences": {
+        "notifications": false,
+        "theme": "light",
+        "items_per_page": 10
+      }
+    },
+    {
+      "id": "323e4567-e89b-12d3-a456-426614174002",
+      "name": "Alice Johnson",
+      "age": 35,
+      "email": "alice.johnson@example.com",
+      "created_at": "2023-03-10T14:45:00Z",
+      "is_active": true,
+      "tags": ["developer", "team lead"],
+      "address": {
+        "street": "789 Oak St",
+        "city": "Sometown",
+        "postal_code": "10112"
+      },
+      "preferences": {
+        "notifications": true,
+        "theme": "dark",
+        "items_per_page": 15
+      }
+    }
+  ]

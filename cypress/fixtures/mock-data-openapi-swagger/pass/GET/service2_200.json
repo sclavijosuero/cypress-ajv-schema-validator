@@ -1,0 +1,57 @@
+[
+  {
+    "id": "543e4567-e89b-12d3-a456-426614174000",
+    "description": "Detailed description of service 2 - item 1",
+    "createdDate": "2023-01-01T12:00:00Z",
+    "priority": 1,
+    "completed": false,
+    "details": {
+      "detail1": "Detail 1 - item 1",
+      "detail2": 123
+    }
+  },
+  {
+    "id": "678e4567-e89b-12d3-a456-426614174001",
+    "description": "Detailed description of service 2 - item 2",
+    "createdDate": "2023-01-03T12:00:00Z",
+    "priority": 2,
+    "completed": true,
+    "details": {
+      "detail1": "Detail 1 - item 2",
+      "detail2": 456
+    }
+  },
+  {
+    "id": "789e4567-e89b-12d3-a456-426614174002",
+    "description": "Detailed description of service 2 - item 3",
+    "createdDate": "2023-01-05T12:00:00Z",
+    "priority": 3,
+    "completed": false,
+    "details": {
+      "detail1": "Detail 1 - item 3",
+      "detail2": 789
+    }
+  },
+  {
+    "id": "890e4567-e89b-12d3-a456-426614174003",
+    "description": "Detailed description of service 2 - item 4",
+    "createdDate": "2023-01-07T12:00:00Z",
+    "priority": 4,
+    "completed": false,
+    "details": {
+      "detail1": "Detail 1 - item 4",
+      "detail2": 101
+    }
+  },
+  {
+    "id": "901e4567-e89b-12d3-a456-426614174004",
+    "description": "Detailed description of service 2 - item 5",
+    "createdDate": "2023-01-09T12:00:00Z",
+    "priority": 5,
+    "completed": true,
+    "details": {
+      "detail1": "Detail 1 - item 5",
+      "detail2": 202
+    }
+  }
+]

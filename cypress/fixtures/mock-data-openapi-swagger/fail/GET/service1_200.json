@@ -1,0 +1,15 @@
+{
+    "id": 123456,
+    "name": null,
+    "status": 1,
+    "email": "invalid-email-format",
+    "createdAt": null,
+    "isActive": "yes",
+    "age": null,
+    "tags": ["tag1", 2, true],
+    "preferences": {
+      "notifications": "yes",
+      "theme": "dark",
+      "itemsPerPage": "ten"
+    }
+}

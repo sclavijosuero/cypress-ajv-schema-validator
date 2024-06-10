@@ -1,0 +1,21 @@
+[
+    {
+      "id": "abc123",
+      "description": null,
+      "createdDate": "abc123",
+      "priority": 3,
+      "completed": true,
+      "details": {
+        "detail1": 789
+      }
+    },
+    {
+      "id": null,
+      "description": "New Entry",
+      "completed": "false",
+      "priority": true,
+      "details": {
+        "detail2": 260
+      }
+    }
+]

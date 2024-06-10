@@ -1,0 +1,13 @@
+[
+    { "endpoint": "/service1", "method": "GET", "status": 200 },
+    { "endpoint": "/service1", "method": "GET", "status": 401 },
+
+    { "endpoint": "/service1", "method": "POST", "status": 201 },
+    { "endpoint": "/service1", "method": "POST", "status": 401 },
+
+    { "endpoint": "/service2", "method": "GET", "status": 200 },
+    { "endpoint": "/service2", "method": "GET", "status": 401 },
+    
+    { "endpoint": "/service2", "method": "POST", "status": 201 },
+    { "endpoint": "/service2", "method": "POST", "status": 401 }
+]
