@@ -12,7 +12,7 @@ A Cypress plugin for API testing to validate the API response against JSON Schem
   
 - Schema is provided as a JSON object, that could come from a Cypress fixture.
   
-- Can validate schemas provided as a **Plain JSON schema**, **OpenAPI 3.0.1** and **Swagger 2.0** schema documents.
+- Can validate schemas provided as a **Plain JSON** schema, **OpenAPI 3.0.1** and **Swagger 2.0** schema documents.
   
 - Provides in the Cypress log a summary of the schema errors as well as a list of the individual errors in the schema validation.
   
@@ -77,6 +77,8 @@ A Cypress plugin for API testing to validate the API response against JSON Schem
 
 ```sh
 npm install cypress-ajv-schema-validator
+// or
+yarn add cypress-ajv-schema-validator
 ```
 
 ## Compatibility
