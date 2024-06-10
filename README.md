@@ -1,6 +1,3 @@
-Thank you for catching that. Here is the updated `README.md` with the parameter clarification:
-
-```markdown
 # cypress-ajv-schema-validator
 
 A Cypress plugin for validating response body against JSON schema, Swagger, and OpenAPI documents using Ajv.
@@ -244,4 +241,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ### [1.0.0]
 - Initial release.
-```
