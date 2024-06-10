@@ -52,6 +52,10 @@ Validates the response body against the provided schema.
 
 - `Cypress.Chainable`: The response object wrapped in a Cypress.Chainable.
 
+##### Throws
+
+- `Error`: If any of the required parameters are missing or if the schema or schema definition is not found.
+
 ### Functions
 
 #### `validateSchema(data, schema, path)`
@@ -70,6 +74,10 @@ Validates the given data against the provided schema.
 ##### Returns
 
 - `Array`: An array of validation errors, or null if the data is valid against the schema.
+
+##### Throws
+
+- `Error`: If any of the required parameters are missing or if the schema or schema definition is not found.
 
 ## Usage and Examples
 
