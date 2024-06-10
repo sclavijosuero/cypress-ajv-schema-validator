@@ -22,11 +22,15 @@ A Cypress plugin for API testing to validate the API response against JSON Schem
 
 - The Ajv instance used in this plugin `cypress-ajv-schema-validator` is configured with the options `{ allErrors: true, strict: false }` to show all validation errors and disable strict mode.
 
+&nbsp; 
+
+> ⭐⭐⭐⭐⭐
 > **Note:** This plugin complements **Filip Hric** [cypress-plugin-api](https://github.com/filiphric/cypress-plugin-api) and **Gleb Bahmutov** [@bahmutov/cy-api](https://github.com/bahmutov/cy-api) plugins to perform JSON schema validations.
 >
 > Example usage with these two API plugins:
 > `cy.api('/users/1').validateSchema(schema);`
 
+&nbsp; 
 
 - [cypress-ajv-schema-validator](#cypress-ajv-schema-validator)
   - [Main Features](#main-features)
@@ -313,7 +317,8 @@ describe('API Schema Validation Function', () => {
 ### Example: Using `cy.api()` from Plugin `cypress-plugin-api` or `@bahmutov/cy-api`
 
 ```js
-import 'cypress-ajv-schema-validator';
+import 'cypress-plugin-api';
+// or
 // import '@bahmutov/cy-api'
 
 describe('API Schema Validation using cy.api()', () => {
