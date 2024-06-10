@@ -67,6 +67,7 @@ A Cypress plugin for API testing to validate the API response against JSON Schem
   - [Changelog](#changelog)
     - [\[1.0.0\]](#100)
 
+---
 
 ## Installation
 
