@@ -8,9 +8,11 @@ A Cypress plugin for API testing to validate the API response against JSON Schem
 
 - Cypress command `cy.validateSchema()` and utility function `validateSchema()` to report JSON Schema validation errors in the response obtained from any network request with `cy.request()`.
   
+- The command `cy.validateSchema()` is chainable and returns the original API response yielded.
+  
 - Schema is provided as a JSON object, that could come from a Cypress fixture.
   
-- Can validate schemas provided as a plain JSON schema, OpenAPI 3.0.1 and Swagger 2.0 schema documents.
+- Can validate schemas provided as a **plain JSON schema**, **OpenAPI 3.0.1** and *Swagger 2.0** schema documents.
   
 - Provides in the Cypress log a summary of the schema errors as well as a list of the individual errors in the schema validation.
   
@@ -18,12 +20,53 @@ A Cypress plugin for API testing to validate the API response against JSON Schem
   
 - Ajv JSON Schema Validator was chosen as the core engine because of its versatility, powerful validation capabilities, and excellent documentation. For more information on Ajv, visit [Ajv official website](https://ajv.js.org/).
 
-> **Note:** This plugin complements **Filip Hric** [cypress-plugin-api](https://github.com/filiphric/cypress-plugin-api) and **Gleb Bahmutov** [cy-api](https://github.com/bahmutov/cy-api)  plugins.
+- The Ajv instance used in this plugin `cypress-ajv-schema-validator` is configured with the options `{ allErrors: true, strict: false }` to show all validation errors and disable strict mode.
+
+> **Note:** This plugin complements **Filip Hric** [cypress-plugin-api](https://github.com/filiphric/cypress-plugin-api) and **Gleb Bahmutov** [@bahmutov/cy-api](https://github.com/bahmutov/cy-api) plugins to perform JSON schema validations.
 >
 > Example usage with these two API plugins:
-```js
-cy.api('/users/1').validateSchema(schema);
-```
+> `cy.api('/users/1').validateSchema(schema);`
+
+
+- [cypress-ajv-schema-validator](#cypress-ajv-schema-validator)
+  - [Main Features](#main-features)
+  - [Installation](#installation)
+  - [Compatibility](#compatibility)
+  - [Configuration](#configuration)
+    - [For `cy.validateSchema` Custom Command](#for-cyvalidateschema-custom-command)
+    - [For `validateSchema` Function](#for-validateschema-function)
+  - [API Reference](#api-reference)
+    - [Custom Commands](#custom-commands)
+      - [`cy.validateSchema(schema, path)`](#cyvalidateschemaschema-path)
+        - [Parameters](#parameters)
+        - [Returns](#returns)
+        - [Throws](#throws)
+    - [Functions](#functions)
+      - [`validateSchema(data, schema, path)`](#validateschemadata-schema-path)
+        - [Parameters](#parameters-1)
+        - [Returns](#returns-1)
+        - [Throws](#throws-1)
+  - [Usage and Examples](#usage-and-examples)
+    - [Example: Using `cy.validateSchema` Command](#example-using-cyvalidateschema-command)
+      - [Plain JSON Schema](#plain-json-schema)
+      - [OpenAPI 3.0.1](#openapi-301)
+      - [Swagger 2.0](#swagger-20)
+    - [Example: Using `validateSchema` Function](#example-using-validateschema-function)
+      - [OpenAPI 3.0.1](#openapi-301-1)
+    - [Example: Using `cy.api()` from Plugin `cypress-plugin-api` or `@bahmutov/cy-api`](#example-using-cyapi-from-plugin-cypress-plugin-api-or-bahmutovcy-api)
+  - [Validation Results](#validation-results)
+    - [Test Passed](#test-passed)
+    - [Test Failed](#test-failed)
+      - [Overview of Errors](#overview-of-errors)
+      - [Detailed Error View](#detailed-error-view)
+    - [Test Failed with More than 10 Errors](#test-failed-with-more-than-10-errors)
+      - [Overview with More Errors](#overview-with-more-errors)
+      - [Error Details in Console](#error-details-in-console)
+      - [More Errors in Console](#more-errors-in-console)
+  - [License](#license)
+  - [Changelog](#changelog)
+    - [\[1.0.0\]](#100)
+
 
 ## Installation
 
@@ -262,6 +305,52 @@ describe('API Schema Validation Function', () => {
       
       expect(errors).to.have.length(0); // Assertion to ensure no validation errors
     });
+  });
+});
+```
+
+### Example: Using `cy.api()` from Plugin `cypress-plugin-api` or `@bahmutov/cy-api`
+
+```js
+import 'cypress-ajv-schema-validator';
+// import '@bahmutov/cy-api'
+
+describe('API Schema Validation using cy.api()', () => {
+  it('should validate the user data using OpenAPI 3.0.1 schema', () => {
+    const schema = {
+      "openapi": "3.0.1",
+      "paths": {
+        "/users/{id}": {
+          "get": {
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "schemas": {
+          "User": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "age": { "type": "number" }
+            },
+            "required": ["name", "age"]
+          }
+        }
+      }
+    };
+
+    const path = { endpoint: '/users/{id}', method: 'GET', status: 200 };
+
+    cy.api('/users/1').validateSchema(schema, path);
   });
 });
 ```
