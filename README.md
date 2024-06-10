@@ -1,6 +1,8 @@
 # cypress-ajv-schema-validator
 
-A Cypress plugin for validating response body against JSON schema, Swagger, and OpenAPI documents using Ajv.
+A Cypress plugin for validating the response body against JSON Schema, Swagger, and OpenAPI documents using Ajv.
+
+Ajv JSON Schema Validator was chosen as the core engine because of its versatility, powerful validation capabilities, and excellent documentation. For more information on Ajv, visit [Ajv official website](https://ajv.js.org/).
 
 ## Installation
 
@@ -16,18 +18,18 @@ npm install cypress-ajv-schema-validator
 
 ## Configuration
 
-Add the following line to either your `cypress/support/commands.js` to include the custom command globally, or directly in the test file that will host the schema validation tests:
+Add the following lines either to your `cypress/support/commands.js` to include the custom command and function globally, or directly in the test file that will host the schema validation tests:
 
-### In `cypress/support/commands.js`
+### For `cy.validateSchema` Custom Command
 
 ```js
 import 'cypress-ajv-schema-validator';
 ```
 
-### Or directly in your test file
+### For `validateSchema` Function
 
 ```js
-import 'cypress-ajv-schema-validator';
+import validateSchema from 'cypress-ajv-schema-validator';
 ```
 
 ## API Reference
@@ -189,6 +191,8 @@ describe('API Schema Validation with Swagger 2.0', () => {
 #### OpenAPI 3.0.1
 
 ```js
+import validateSchema from 'cypress-ajv-schema-validator';
+
 describe('API Schema Validation Function', () => {
   it('should validate the user data using validateSchema function', () => {
     const schema = {
