@@ -29,6 +29,8 @@ A Cypress plugin for API testing to validate the API response against JSON Schem
 >
 > Example usage with these two API plugins:
 > `cy.api('/users/1').validateSchema(schema);`
+>
+> To see an example of `cypress-ajv-schema-validator` working with the `cypress-plugin-api` plugin for the Swagger PetStore API, check the sample test [test-petstore-with-cypress-plugin-api.js](cypress/e2e/test-petstore-with-cypress-plugin-api.js).
 
 &nbsp; 
 
