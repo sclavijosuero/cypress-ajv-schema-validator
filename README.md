@@ -178,18 +178,18 @@ When a test passes, the Cypress log will show the message: "✔️ **PASSED - TH
 
 ### Test Failed
 
-When a test passes, the Cypress log will show the message: "❌ **FAILED - THE RESPONSE BODY IS NOT VALID AGAINST THE SCHEMA**"; indicating the total number of errors: _(Number of schema errors: N_).
+When a test fails, the Cypress log will show the message: "❌ **FAILED - THE RESPONSE BODY IS NOT VALID AGAINST THE SCHEMA**"; indicating the total number of errors: _(Number of schema errors: N_).
 
-Also, the Cypress log will show one for each of the individual schema validation errors as provided by Ajv. The errors that correspond to missing fields in the data validated are marked with the symbol 🗑️, and the rest of the errors with the symbol 👉.
+Also, the Cypress log will show an entry for each of the individual schema validation errors as provided by Ajv. The errors that correspond to missing fields in the data validated are marked with the symbol 🗑️, and the rest of the errors with the symbol 👉.
 
 ![Test Failed Overview](images/error11.png)
 
-#### Detailed Error View
+#### Detailed Error View in the Console
 
 If you open the Console in the browser DevTools, and click on the summary line for the schema validation error in the Cypress log, the console will display detailed information about all the errors. This includes:
 
 - The total number of errors
-- The full list of errors as provided by the AJV format
+- The full list of errors as provided by the AJV.
 - A user-friendly view of the validated data, highlighting where each validation error occurred and the exact reason for the mismatch.
 
 ![Test Failed Details](images/error12.png)
@@ -200,15 +200,15 @@ When there are more than 10 schema validation errors, the Cypress log will show 
 
 ![Test Failed Many Errors](images/error21.png)
 
-#### Error Details in Console
+#### Detailed Error View in the Console
 
-In this case, clicking on the summary line for the schema validation error in the Cypress log will also display: the total number of errors, the full list of errors in AJV format, and the user-friendly view of the schema mismatches, making it easy to understand where the errors occurred.
+In this case, clicking on the summary line for the schema validation error in the Cypress log will also display: the total number of errors, the full list of errors as provided by AJV, and the user-friendly view of the schema mismatches, making it easy to understand where the errors occurred.
 
 ![Error Details in Console](images/error22.png)
 
-#### More Errors in Console
+#### More Errors in the Console
 
-When clicking on the "**...and N more errors.**" line in the Cypress log, the browser console will show additional details for the errors grouped under that entry.
+When clicking on the "**...and N more errors.**" line in the Cypress log, the browser console will show additional details for the errors grouped under that entry as provided by Ajv.
 
 ![More Errors in Console](images/error23.png)
 

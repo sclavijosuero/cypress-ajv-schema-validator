@@ -1,4 +1,4 @@
-## Usage and Examples
+## Usage Examples
 
 ### Example: Using `cy.validateSchema` Command
 
