@@ -9,7 +9,7 @@ describe('Petstore API', () => {
 
     var petstoreAPISchema
 
-    beforeEach(() => {
+    before(() => {
         cy.api('https://petstore.swagger.io/v2/swagger.json').its('body', { log: false }).then((schema) => {
             petstoreAPISchema = schema
         })
