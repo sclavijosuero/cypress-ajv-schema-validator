@@ -230,7 +230,8 @@ Example of an OpenAPI specification:
       }
     }
   }
-}```
+}
+```
 
 
 ## Usage Examples
