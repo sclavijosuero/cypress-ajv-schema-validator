@@ -18,9 +18,7 @@ A Cypress plugin for API testing to validate the API response against Plain JSON
   
 - By clicking on the validation summary line, it outputs in the console the number of schema errors, a full list of the schema errors as provided by Ajv, as well as a nested tree view of the validated data indicating exactly the errors and where they are happening in an easy-to-understand format.
   
-- Ajv JSON Schema Validator was chosen as the core engine because of its versatility, powerful validation capabilities, and excellent documentation. For more information on Ajv, visit [Ajv official website](https://ajv.js.org/).
-
-- The Ajv instance used in this plugin `cypress-ajv-schema-validator` is configured with the options `{ allErrors: true, strict: false }` to show all validation errors and disable strict mode.
+- It uses the Ajv Schema Validator as its core engine.
 
 &nbsp; 
 
@@ -33,6 +31,29 @@ A Cypress plugin for API testing to validate the API response against Plain JSON
 > To see an example of `cypress-ajv-schema-validator` working with the `cypress-plugin-api` plugin for the Swagger PetStore API, check the sample test [test-petstore-with-cypress-plugin-api.js](cypress/e2e/test-petstore-with-cypress-plugin-api.js).
 
 &nbsp; 
+
+### About JSON Schemas and Ajv Schema Validator
+
+#### JSON Schema
+
+JSON Schema is a hierarchical, declarative language that describes and validates JSON data.
+
+#### OpenAPI 3.0.1 and Swagger 2.0 Schema Documents
+
+The OpenAPI Specification (formerly Swagger Specification) are schema documents to describe your entire API (in JSON format or XML format). So a schema document will contain multiple schemas, one for each supported combination of **_Endpoint - Method - Expected Response Status_** (also called _path_) by that API.
+
+#### Ajv JSON Schema Validator
+
+AJV, or Another JSON Schema Validator, is a JavaScript library that validates data objects against a JSON Schema structure.
+
+It was chosen as the core engine of the `cypress-ajv-schema-validator` plugin because of its versatility, speed, capabilities, continuous maintenance, and excellent documentation. For more information on Ajv, visit the [Ajv official website](https://ajv.js.org/).
+
+Ajv supports validation of the following schema formats: **JSON Schema**, **OpenAPI 3.0.1** specification, and **Swagger 2.0** specification. However, Ajv needs to be provided with the specific schema to be validated for an endpoint, method, and expected response; it cannot process a full OpenAPI 3.0.1 or Swagger 2.0 schema document by itself.
+
+The `cypress-ajv-schema-validator` plugin simplifies this by obtaining the correct schema definition for the endpoint you want to test. You just need to provide the full schema document (OpenAPI or Swagger) and the path to the schema definition of the service you want to validate for your API (_Endpoint - Method - Expected Response Status_).
+
+> **Note:** The Ajv instance used in this plugin (`cypress-ajv-schema-validator`) is configured with the options `{ allErrors: true, strict: false }` to display all validation errors and disable strict mode.
+
 
 ## Installation
 
@@ -148,92 +169,6 @@ cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
 ```
 
 
-## About APIs, Schemas, and Schema Documents
-
-### Schema
-
-When you make a request to an API endpoint with a specific method (GET, POST, etc.), it triggers an action/operation in the backend and generates a response (affirmative or negative regarding the action). However, in every case, the response data will follow a specific structure previously defined, called the API Schema.
-
-An API schema is a metadata tool that defines how data is structured for an API. It represents the pact agreed upon by both the provider and the consumer.
-
-#### JSON Schema
-
-JSON Schema is a hierarchical, declarative language that describes and validates JSON data.
-
-JSON schemas can be used to validate the possible responses obtained from calls to an API endpoint with a method (GET, POST, etc.). A call to a specific API endpoint might generate different types of responses (e.g., ok, unauthorized, forbidden, etc.), so each of these responses will have an associated JSON schema.
-
-Example of a JSON schema:
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "name": { "type": "string" },
-    "age": { "type": "number" }
-  },
-  "required": ["name", "age"]
-}
-```
-
-### API Schema Document
-
-An API schema document, or metadata document, allows you to describe your entire API. An API may include multiple endpoints, so the schema document will contain multiple schemas, one for each supported combination of Endpoint-Method-ResponseStatus.
-
-#### OpenAPI 3.0.1 and Swagger 2.0 Schema Documents
-
-The OpenAPI Specification (formerly Swagger Specification) is an API description format for REST APIs. One of the supported formats for these specifications is JSON. Swagger 2.0 is simply an older version of the OpenAPI 3.0.1 specification.
-
-Example of an OpenAPI specification:
-
-```json
-{
-  "openapi": "3.0.1",
-  "info": {
-    "title": "Sample API",
-    "description": "API description in OpenAPI 3.0.1",
-    "version": "1.0.0"
-  },
-  "paths": {
-    "/users/{userId}": {
-      "get": {
-        "summary": "Get user by userId",
-        "responses": {
-          "200": {
-            "description": "User found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "integer" },
-                    "name": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": { "type": "integer" },
-                    "message": { "type": "string" }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
-
-
 ## Usage Examples
 
 For detailed usage examples, check the document [USAGE-EXAMPLES.md](USAGE-EXAMPLES.md).
@@ -274,7 +209,7 @@ Also, the Cypress log will show an entry for each of the individual schema valid
 If you open the Console in the browser DevTools, and click on the summary line for the schema validation error in the Cypress log, the console will display detailed information about all the errors. This includes:
 
 - The total number of errors
-- The full list of errors as provided by the AJV.
+- The full list of errors as provided by the Ajv.
 - A user-friendly view of the validated data, highlighting where each validation error occurred and the exact reason for the mismatch.
 
 ![Test Failed Details](images/error12.png)
@@ -287,7 +222,7 @@ When there are more than 10 schema validation errors, the Cypress log will show 
 
 #### Detailed Error View in the Console
 
-In this case, clicking on the summary line for the schema validation error in the Cypress log will also display: the total number of errors, the full list of errors as provided by AJV, and the user-friendly view of the schema mismatches, making it easy to understand where the errors occurred.
+In this case, clicking on the summary line for the schema validation error in the Cypress log will also display: the total number of errors, the full list of errors as provided by Ajv, and the user-friendly view of the schema mismatches, making it easy to understand where the errors occurred.
 
 ![Error Details in Console](images/error22.png)
 
