@@ -12,7 +12,7 @@ A Cypress plugin for API testing to validate the API response against Plain JSON
   
 - Schema is provided as a JSON object, that could come from a Cypress fixture.
   
-- Can validate schemas provided as a **Plain JSON** schema, **OpenAPI 3.0.1** and **Swagger 2.0** schema documents.
+- Can validate schemas provided as a **plain JSON schema***, **OpenAPI 3.0.1 schema document** and **Swagger 2.0 schema document**.
   
 - Provides in the Cypress log a summary of the schema errors as well as a list of the individual errors in the schema validation.
   
@@ -41,7 +41,6 @@ npm install cypress-ajv-schema-validator
 // or
 yarn add cypress-ajv-schema-validator
 ```
-
 
 ## Compatibility
 
@@ -147,6 +146,91 @@ cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
   expect(errors).to.have.length(0); // Assertion to ensure no validation errors
 });
 ```
+
+
+## About APIs, Schemas, and Schema Documents
+
+### Schema
+
+When you make a request to an API endpoint with a specific method (GET, POST, etc.), it triggers an action/operation in the backend and generates a response (affirmative or negative regarding the action). However, in every case, the response data will follow a specific structure previously defined, called the API Schema.
+
+An API schema is a metadata tool that defines how data is structured for an API. It represents the pact agreed upon by both the provider and the consumer.
+
+#### JSON Schema
+
+JSON Schema is a hierarchical, declarative language that describes and validates JSON data.
+
+JSON schemas can be used to validate the possible responses obtained from calls to an API endpoint with a method (GET, POST, etc.). A call to a specific API endpoint might generate different types of responses (e.g., ok, unauthorized, forbidden, etc.), so each of these responses will have an associated JSON schema.
+
+Example of a JSON schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "age": { "type": "number" }
+  },
+  "required": ["name", "age"]
+}
+```
+
+### API Schema Document
+
+An API schema document, or metadata document, allows you to describe your entire API. An API may include multiple endpoints, so the schema document will contain multiple schemas, one for each supported combination of Endpoint-Method-ResponseStatus.
+
+#### OpenAPI 3.0.1 and Swagger 2.0 Schema Documents
+
+The OpenAPI Specification (formerly Swagger Specification) is an API description format for REST APIs. One of the supported formats for these specifications is JSON. Swagger 2.0 is simply an older version of the OpenAPI 3.0.1 specification.
+
+Example of an OpenAPI specification:
+
+```json
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Sample API",
+    "description": "API description in OpenAPI 3.0.1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/users/{userId}": {
+      "get": {
+        "summary": "Get user by userId",
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}```
 
 
 ## Usage Examples
