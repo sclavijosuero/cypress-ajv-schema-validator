@@ -6,19 +6,22 @@ A Cypress plugin for API testing to validate the API response against Plain JSON
 
 ## Main Features
 
-- Cypress command `cy.validateSchema()` and utility function `validateSchema()` to report JSON Schema validation errors in the response obtained from any network request with `cy.request()`.
+- Cypress command **`cy.validateSchema()`** and utility function **`validateSchema()`** to report JSON Schema validation errors in the response obtained from any network request with `cy.request()`.
   
 - The command `cy.validateSchema()` is chainable and returns the original API response yielded.
   
 - Schema is provided as a JSON object, that could come from a Cypress fixture.
   
-- It uses the *Ajv JSON Schema Validator* as its core engine.
+- It uses the **Ajv JSON Schema Validator** as its core engine.
   
-- Support schemas provided as **plain JSON schema***, **OpenAPI 3.0.1 schema document** and **Swagger 2.0 schema document**.
+- Support schemas provided as **plain JSON schema**, **OpenAPI 3.0.1 schema document** and **Swagger 2.0 schema document**.
   
 - Provides in the Cypress log a summary of the schema errors as well as a list of the individual errors in the schema validation.
   
-- By clicking on the summary of schema errors in the Cypress log, the console will output the number of schema errors, a full list of schema errors as provided by AJV, and a nested tree view of the validated data, clearly indicating the errors and where they occurred in an easy-to-understand format.
+- By clicking on the summary of schema errors in the Cypress log, the console will output:
+  -  Number of schema errors.
+  -  Full list of schema errors as provided by Ajv.
+  -  A nested tree view of the validated data, clearly indicating the errors and where they occurred in an easy-to-understand format.
 
 &nbsp; 
 
