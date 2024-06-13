@@ -35,7 +35,7 @@ A Cypress plugin for API testing to validate the API response against Plain JSON
 
 &nbsp; 
 
-### About JSON Schemas and Ajv Schema Validator
+### About JSON Schemas and Ajv JSON Schema Validator
 
 #### JSON Schema
 
@@ -57,6 +57,7 @@ The `cypress-ajv-schema-validator` plugin simplifies this by obtaining the corre
 
 > **Note:** The Ajv instance used in this plugin (`cypress-ajv-schema-validator`) is configured with the options `{ allErrors: true, strict: false }` to display all validation errors and disable strict mode.
 
+&nbsp; 
 
 ## Installation
 
