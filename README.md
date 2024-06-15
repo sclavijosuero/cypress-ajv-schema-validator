@@ -4,6 +4,8 @@ A Cypress plugin for API testing to validate the API response against Plain JSON
 
 ![Overview](images/overview.png)
 
+For a detailed guide on how to use this plugin, check out my blog post, ["CYPRESS-AJV-SCHEMA-VALIDATOR Plugin: The Brave Vigilante for Your API Contracts,"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-plugin-the-brave-vigilante-for-your-api-contracts-5cfe) on my Cypress blog. There you'll find comprehensive information about setting up and getting the most out of this plugin.
+
 ## Main Features
 
 - Cypress command **`cy.validateSchema()`** and utility function **`validateSchema()`** to report JSON Schema validation errors in the response obtained from any network request with `cy.request()`.
