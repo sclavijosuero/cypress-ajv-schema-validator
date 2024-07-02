@@ -246,5 +246,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Changelog
 
+### [1.1.0]
+- Added GitHub CI/CD workflow.
+
 ### [1.0.0]
 - Initial release.
