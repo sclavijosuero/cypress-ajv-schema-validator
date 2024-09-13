@@ -64,9 +64,7 @@ The `cypress-ajv-schema-validator` plugin simplifies this by obtaining the corre
 ## Installation
 
 ```sh
-npm install cypress-ajv-schema-validator
-// or
-yarn add cypress-ajv-schema-validator
+npm install -D cypress-ajv-schema-validator
 ```
 
 ## Compatibility
@@ -246,8 +244,21 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Changelog
 
+### [1.1.1]
+- Added details to documentation.
+
 ### [1.1.0]
 - Added GitHub CI/CD workflow.
 
 ### [1.0.0]
 - Initial release.
+
+
+## External references
+
+- [Murat Ozcan](https://www.linkedin.com/in/murat-ozcan-3489898/ "Murat Ozcan") - Video [Schema validation using cypress-ajv-schema-validator vs Optic](https://www.youtube.com/watch?v=ysCADOh9aJU "Schema validation using cypress-ajv-schema-validator vs Optic")
+
+- [Joan Esquivel Montero](https://www.linkedin.com/in/joanesquivel/ " Joan Esquivel Montero") - Video [Cypress API Testing: AJV SCHEMA VALIDATOR](https://www.youtube.com/watch?v=SPmJvH5mYaU "Cypress API Testing: AJV SCHEMA VALIDATOR")
+
+- [json-schema.org](https://json-schema.org/ "https://json-schema.org/") - Website [JSON Schema Tooling](https://json-schema.org/tools?query=&sortBy=name&sortOrder=ascending&groupBy=toolingTypes&licenses=&languages=&drafts=&toolingTypes=#json-schema-tooling "JSON Schema Tooling")
+

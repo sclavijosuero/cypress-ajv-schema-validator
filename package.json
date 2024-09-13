@@ -1,6 +1,6 @@
 {
   "name": "cypress-ajv-schema-validator",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Lightweight API schema validator for Plain JSON schemas, Swagger schema documents, or OpenAPI schema documents using Ajv JSON Schema Validator",
   "main": "src/index.js",
   "scripts": {
@@ -11,7 +11,12 @@
     "url": "git+https://github.com/sclavijosuero/cypress-ajv-schema-validator.git"
   },
   "keywords": [
-    "plugin"
+    "plugin",
+    "cypress",
+    "ajv",
+    "schema",
+    "validator",
+    "json"
   ],
   "author": "Sebastian Clavijo Suero",
   "license": "MIT",
