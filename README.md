@@ -102,10 +102,11 @@ Validates the response body against the provided schema.
 ##### Parameters
 
 - `schema` (object): The schema to validate against. Supported formats are plain JSON schema, Swagger, and OpenAPI documents.
-- `path` (object, optional): The path object to the schema definition in a Swagger or OpenAPI document.
+- `path` (object, optional): This second parameter only applies to Swagger or OpenAPI documents. 
+  It represents the path to the schema definition in a Swagger or OpenAPI document and is determined by three properties:
   - `endpoint` (string, optional): The endpoint path.
   - `method` (string, optional): The HTTP method. Defaults to 'GET'.
-  - `status` (integer, optional): The response status code. Defaults to 200.
+  - `status` (integer, optional): The response status code. If not provided, defaults to 200.
 
 ##### Returns
 
@@ -122,12 +123,14 @@ cy.request('GET', 'https://awesome.api.com/users/1')
   .validateSchema(schema);
 ```
 
-Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents:
+Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents and path to the schema definition:
 
 ```js
 cy.request('GET', 'https://awesome.api.com/users/1')
   .validateSchema(schema, { endpoint: '/users/{id}', method: 'GET', status: 200 });
 ```
+
+![Path to the schema definition](images/path.png)
 
 ### Functions
 
@@ -162,7 +165,7 @@ cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
 });
 ```
 
-Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents:
+Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents and path to the schema definition:
 
 ```js
 cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
