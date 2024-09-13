@@ -130,7 +130,7 @@ cy.request('GET', 'https://awesome.api.com/users/1')
   .validateSchema(schema, { endpoint: '/users/{id}', method: 'GET', status: 200 });
 ```
 
-Using the path defined by `{ endpoint, method, status }`, the plugin will automatically take the schema `$ref` for that definition, find it in the `components section`, and use it for the schema validation.
+Using the path defined by `{ endpoint, method, status }`, the plugin will automatically take the schema `$ref` for that definition, find it in the `components` section, and use it in the schema validation.
 
 ![Path to the schema definition](images/path.png)
 
