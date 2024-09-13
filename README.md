@@ -64,9 +64,7 @@ The `cypress-ajv-schema-validator` plugin simplifies this by obtaining the corre
 ## Installation
 
 ```sh
-npm install cypress-ajv-schema-validator
-// or
-yarn add cypress-ajv-schema-validator
+npm install -D cypress-ajv-schema-validator
 ```
 
 ## Compatibility
@@ -104,10 +102,11 @@ Validates the response body against the provided schema.
 ##### Parameters
 
 - `schema` (object): The schema to validate against. Supported formats are plain JSON schema, Swagger, and OpenAPI documents.
-- `path` (object, optional): The path object to the schema definition in a Swagger or OpenAPI document.
+- `path` (object, optional): This second parameter only applies to Swagger or OpenAPI documents. 
+  It represents the path to the schema definition in a Swagger or OpenAPI document and is determined by three properties:
   - `endpoint` (string, optional): The endpoint path.
   - `method` (string, optional): The HTTP method. Defaults to 'GET'.
-  - `status` (integer, optional): The response status code. Defaults to 200.
+  - `status` (integer, optional): The response status code. If not provided, defaults to 200.
 
 ##### Returns
 
@@ -124,12 +123,16 @@ cy.request('GET', 'https://awesome.api.com/users/1')
   .validateSchema(schema);
 ```
 
-Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents:
+Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents and path to the schema definition:
 
 ```js
 cy.request('GET', 'https://awesome.api.com/users/1')
   .validateSchema(schema, { endpoint: '/users/{id}', method: 'GET', status: 200 });
 ```
+
+Using the path defined by `{ endpoint, method, status }`, the plugin will automatically take the schema `$ref` for that definition, find it in the `components` section, and use it in the schema validation.
+
+![Path to the schema definition](images/path.png)
 
 ### Functions
 
@@ -164,7 +167,7 @@ cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
 });
 ```
 
-Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents:
+Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents and path to the schema definition:
 
 ```js
 cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
@@ -246,8 +249,25 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Changelog
 
+### [1.1.2]
+- Added details to documentation.
+
+### [1.1.1]
+- (Skipped)
+
 ### [1.1.0]
 - Added GitHub CI/CD workflow.
 
 ### [1.0.0]
 - Initial release.
+
+
+## External references
+
+- [Murat Ozcan](https://www.linkedin.com/in/murat-ozcan-3489898/ "Murat Ozcan") - Video [Schema validation using cypress-ajv-schema-validator vs Optic](https://www.youtube.com/watch?v=ysCADOh9aJU "Schema validation using cypress-ajv-schema-validator vs Optic")
+
+- [Joan Esquivel Montero](https://www.linkedin.com/in/joanesquivel/ " Joan Esquivel Montero") - Video [Cypress API Testing: AJV SCHEMA VALIDATOR](https://www.youtube.com/watch?v=SPmJvH5mYaU "Cypress API Testing: AJV SCHEMA VALIDATOR")
+
+- [json-schema.org](https://json-schema.org/ "https://json-schema.org/") - Website [JSON Schema Tooling](https://json-schema.org/tools?query=&sortBy=name&sortOrder=ascending&groupBy=toolingTypes&licenses=&languages=&drafts=&toolingTypes=#json-schema-tooling "JSON Schema Tooling")
+
+
