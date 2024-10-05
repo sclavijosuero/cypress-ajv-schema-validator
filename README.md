@@ -14,9 +14,9 @@ For a detailed guide on how to use this plugin, check out my blog post, ["CYPRES
   
 - Schema is provided as a JSON object, that could come from a Cypress fixture.
   
-- It uses the **Ajv JSON Schema Validator** as its core engine.
+- Uses the **Ajv JSON Schema Validator** as its core engine.
   
-- Support schemas provided as **plain JSON schema**, **OpenAPI 3.0.1 schema document** and **Swagger 2.0 schema document**.
+- Supports schemas provided as **plain JSON schema**, **OpenAPI 3.0.1 schema document** and **Swagger 2.0 schema document**.
   
 - Provides in the Cypress log a summary of the schema errors as well as a list of the individual errors in the schema validation.
   
@@ -25,15 +25,17 @@ For a detailed guide on how to use this plugin, check out my blog post, ["CYPRES
   -  Full list of schema errors as provided by Ajv.
   -  A nested tree view of the validated data, clearly indicating the errors and where they occurred in an easy-to-understand format.
 
-&nbsp; 
+- New environment variable `disableSchemaValidation` to disable schema validation **(NEW in v1.2.0)**.
+
+- Provides full integration with **Gleb Bahmutov**'s [@bahmutov/cy-api](https://github.com/bahmutov/cy-api) and **Filip Hric**'s [cypress-plugin-api](https://github.com/filiphric/cypress-plugin-api) plugins, enabling JSON schema validations to be performed directly after the `cy.api() command`.
+  
+  When enabled via the new environment variable `enableMismatchesOnUI`, schema errors are displayed directly in the user interfaces of these plugins **(NEW in v1.2.0)**.
 
 > ⭐⭐⭐⭐⭐
-> **Note:** This plugin complements **Filip Hric** [cypress-plugin-api](https://github.com/filiphric/cypress-plugin-api) and **Gleb Bahmutov** [@bahmutov/cy-api](https://github.com/bahmutov/cy-api) plugins to perform JSON schema validations.
->
 > Example usage with these two API plugins:
 > `cy.api('/users/1').validateSchema(schema);`
 >
-> To see an example of `cypress-ajv-schema-validator` working with the `cypress-plugin-api` plugin for the Swagger PetStore API, check the sample test [test-petstore-with-cypress-plugin-api.js](cypress/e2e/test-petstore-with-cypress-plugin-api.js).
+> To see an example of `cypress-ajv-schema-validator` working with the `@bahmutov/cy-api` and `cypress-plugin-api` plugins for the Swagger PetStore API, check the sample tests files [test-petstore-with-cypress-plugin-api.js](cypress/e2e/test-petstore-with-cypress-plugin-api.js) and [test-multiple-api.js](cypress/e2e/test-multiple-api.js).
 
 &nbsp; 
 
@@ -73,22 +75,25 @@ npm install -D cypress-ajv-schema-validator
 - Ajv 8.16.0 or higher
 - ajv-formats 3.0.1 or higher
 
-
 ## Configuration
 
-Add the following lines either to your `cypress/support/commands.js` to include the custom command and function globally, or directly in the test file that will host the schema validation tests:
+- Add the following lines either to your `cypress/support/commands.js` to include the custom command and function globally, or directly in the test file that will host the schema validation tests:
 
-#### For `cy.validateSchema()` Custom Command
+  **For `cy.validateSchema()` Custom Command**
 
-```js
-import 'cypress-ajv-schema-validator';
-```
+  ```js
+  import 'cypress-ajv-schema-validator';
+  ```
 
-#### For `validateSchema()` Function
+  **For `validateSchema()` Function**
 
-```js
-import validateSchema from 'cypress-ajv-schema-validator';
-```
+  ```js
+  import validateSchema from 'cypress-ajv-schema-validator';
+  ```
+
+- To disable schema validation even when the `cy.validateSchema()` command is present in the test, set the Cypress environment variable `disableSchemaValidation` to `true`. By default, schema validation is enabled.
+
+- To enable the display of schema errors directly in the user interfaces of the `@bahmutov/cy-api` and `cypress-plugin-api` plugins, set the Cypress environment variable `enableMismatchesOnUI` to `true`. By default, this feature is disabled.
 
 
 ## API Reference
@@ -209,7 +214,7 @@ When a test passes, the Cypress log will show the message: "✔️ **PASSED - TH
 
 When a test fails, the Cypress log will show the message: "❌ **FAILED - THE RESPONSE BODY IS NOT VALID AGAINST THE SCHEMA**"; indicating the total number of errors: _(Number of schema errors: N_).
 
-Also, the Cypress log will show an entry for each of the individual schema validation errors as provided by Ajv. The errors that correspond to missing fields in the data validated are marked with the symbol 🗑️, and the rest of the errors with the symbol 👉.
+Also, the Cypress log will show an entry for each of the individual schema validation errors as provided by Ajv. The errors that correspond to missing fields in the data validated are marked with the symbol 🟥, and the rest of the errors with the symbol 🟠.
 
 ![Test Failed Overview](images/error11.png)
 
@@ -219,7 +224,7 @@ If you open the Console in the browser DevTools, and click on the summary line f
 
 - The total number of errors
 - The full list of errors as provided by the Ajv.
-- A user-friendly view of the validated data, highlighting where each validation error occurred and the exact reason for the mismatch.
+- A user-friendly view of the mismatches between the validated data and the JSON schema, highlighting where each validation error occurred and the exact reason for the mismatch.
 
 ![Test Failed Details](images/error12.png)
 
@@ -229,17 +234,41 @@ When there are more than 10 schema validation errors, the Cypress log will show 
 
 ![Test Failed Many Errors](images/error21.png)
 
-#### Detailed Error View in the Console
-
-In this case, clicking on the summary line for the schema validation error in the Cypress log will also display: the total number of errors, the full list of errors as provided by Ajv, and the user-friendly view of the schema mismatches, making it easy to understand where the errors occurred.
-
-![Error Details in Console](images/error22.png)
-
 #### More Errors in the Console
 
 When clicking on the "**...and N more errors.**" line in the Cypress log, the browser console will show additional details for the errors grouped under that entry as provided by Ajv.
 
 ![More Errors in Console](images/error23.png)
+
+
+## Integration with Gleb Bahmutov's `@bahmutov/cy-api` and Filip Hric's `cypress-plugin-api` Plugins
+
+### @bahmutov/cy-api Plugin
+
+When the Cypress environment variable `enableMismatchesOnUI` is set to true, and you have imported the `@bahmutov/cy-api` plugin into your `cypress/support/commands.js` or test file, schema validation mismatches will be displayed directly in the plugin's UI in a user-friendly format.
+
+![Plugin @bahmutov/cy-api](images/cy_api_1.png)
+
+### cypress-plugin-api Plugin
+
+Similarly, when the Cypress environment variable `enableMismatchesOnUI` is set to true, and the `cypress-plugin-api` plugin is imported into your `cypress/support/commands.js` or test file, schema violations will be shown in the plugin's UI.
+
+![Plugin cypress-plugin-api](images/cy_api_2.png)
+
+
+## Disable JSON Schema Validation in your Tests
+
+You can disable schema validation in your tests by setting the Cypress environment variable `disableSchemaValidation` to `true`.
+
+The environment variable can be set in various locations, depending on the specific contexts in which you want to disable the functionality.
+- **Cypress Configuration File (`cypress.config.js`)**: This is useful for applying settings globally across all tests.
+- **Cypress Environment File `cypress.env.json`**: Use this for setting environment variables to be accessible during specific test runs.
+- **Command Line Interface (CLI) using `--env`**: This is ideal for temporary overrides during specific test executions without affecting other configurations.
+- **Within Test Configuration**: Set it directly in the test file for precise control over individual test behaviors.
+
+When schema validation is disabled for a test, the Cypress log and the browser console will display a screen like this:
+
+![JSON Schema Validation Disabled](images/disabled.png)
 
 
 ## License
@@ -248,6 +277,10 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 
 ## Changelog
+
+### [1.2.0]
+- Integration with bahmutov/cy-api and filiphric/cypress-plugin-api to show JSON violations directly in their outputs on the UI.
+- New Cypress environment variable to disable schema validation.
 
 ### [1.1.1]
 - Added details to documentation.
@@ -261,9 +294,13 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## External references
 
-- [Murat Ozcan](https://www.linkedin.com/in/murat-ozcan-3489898/ "Murat Ozcan") - Video [Schema validation using cypress-ajv-schema-validator vs Optic](https://www.youtube.com/watch?v=ysCADOh9aJU "Schema validation using cypress-ajv-schema-validator vs Optic")
+- [Murat Ozcan](https://www.linkedin.com/in/murat-ozcan-3489898/ "Murat Ozcan")
+    - Video [Schema validation using cypress-ajv-schema-validator vs Optic](https://www.youtube.com/watch?v=ysCADOh9aJU "Schema validation using cypress-ajv-schema-validator vs Optic")
+    - Video [Demo comparing API e2e vs Schema testing](https://www.youtube.com/watch?v=ePjcKMq4c2o "Demo comparing API e2e vs Schema testing")
 
 - [Joan Esquivel Montero](https://www.linkedin.com/in/joanesquivel/ " Joan Esquivel Montero") - Video [Cypress API Testing: AJV SCHEMA VALIDATOR](https://www.youtube.com/watch?v=SPmJvH5mYaU "Cypress API Testing: AJV SCHEMA VALIDATOR")
 
 - [json-schema.org](https://json-schema.org/ "https://json-schema.org/") - Website [JSON Schema Tooling](https://json-schema.org/tools?query=&sortBy=name&sortOrder=ascending&groupBy=toolingTypes&licenses=&languages=&drafts=&toolingTypes=#json-schema-tooling "JSON Schema Tooling")
+
+- [cypress.io](https://www.cypress.io/ "https://www.cypress.io/") - Blog [Elevate Your Cypress Testing: Top 10 Essential Plugins](https://www.cypress.io/blog/elevate-your-cypress-testing-top-10-essential-plugins "Elevate Your Cypress Testing: Top 10 Essential Plugins")
 
