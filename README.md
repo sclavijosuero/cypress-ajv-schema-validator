@@ -25,9 +25,9 @@ For a detailed guide on how to use this plugin, check out my blog post, ["CYPRES
   -  Full list of schema errors as provided by Ajv.
   -  A nested tree view of the validated data, clearly indicating the errors and where they occurred in an easy-to-understand format.
 
-- New environment variable `disableSchemaValidation` to disable schema validation **(NEW in v1.2.0)**.
+- New environment variable `disableSchemaValidation` to disable schema validation in your tests **(NEW in v1.2.0)**.
 
-- Provides full integration with **Gleb Bahmutov**'s [@bahmutov/cy-api](https://github.com/bahmutov/cy-api) and **Filip Hric**'s [cypress-plugin-api](https://github.com/filiphric/cypress-plugin-api) plugins, enabling JSON schema validations to be performed directly after the `cy.api() command`.
+- Provides full integration with **Gleb Bahmutov**'s [@bahmutov/cy-api](https://github.com/bahmutov/cy-api) and **Filip Hric**'s [cypress-plugin-api](https://github.com/filiphric/cypress-plugin-api) plugins, enabling JSON schema validations to be performed directly after the `cy.api()` command.
   
   When enabled via the new environment variable `enableMismatchesOnUI`, schema errors are displayed directly in the user interfaces of these plugins **(NEW in v1.2.0)**.
 
@@ -91,9 +91,9 @@ npm install -D cypress-ajv-schema-validator
   import validateSchema from 'cypress-ajv-schema-validator';
   ```
 
-- To disable schema validation even when the `cy.validateSchema()` command is present in the test, set the Cypress environment variable `disableSchemaValidation` to `true`. By default, schema validation is enabled.
+- To **disable schema validation** even when the `cy.validateSchema()` command is present in the test, set the Cypress environment variable `disableSchemaValidation` to `true`. By default, schema validation is enabled.
 
-- To enable the display of schema errors directly in the user interfaces of the `@bahmutov/cy-api` and `cypress-plugin-api` plugins, set the Cypress environment variable `enableMismatchesOnUI` to `true`. By default, this feature is disabled.
+- To **enable the display of schema errors** directly in the user interfaces of the `@bahmutov/cy-api` and `cypress-plugin-api` plugins, set the Cypress environment variable `enableMismatchesOnUI` to `true`. By default, this feature is disabled.
 
 
 ## API Reference
@@ -245,13 +245,13 @@ When clicking on the "**...and N more errors.**" line in the Cypress log, the br
 
 ### @bahmutov/cy-api Plugin
 
-When the Cypress environment variable `enableMismatchesOnUI` is set to true, and you have imported the `@bahmutov/cy-api` plugin into your `cypress/support/commands.js` or test file, schema validation mismatches will be displayed directly in the plugin's UI in a user-friendly format.
+When the Cypress environment variable `enableMismatchesOnUI` is set to `true`, and you have imported the `@bahmutov/cy-api` plugin into your `cypress/support/commands.js` or test file, schema validation mismatches will be displayed directly in the plugin's UI in a user-friendly format.
 
 ![Plugin @bahmutov/cy-api](images/cy_api_1.png)
 
 ### cypress-plugin-api Plugin
 
-Similarly, when the Cypress environment variable `enableMismatchesOnUI` is set to true, and the `cypress-plugin-api` plugin is imported into your `cypress/support/commands.js` or test file, schema violations will be shown in the plugin's UI.
+Similarly, when the Cypress environment variable `enableMismatchesOnUI` is set to `true`, and the `cypress-plugin-api` plugin is imported into your `cypress/support/commands.js` or test file, schema violations will be shown in the plugin's UI.
 
 ![Plugin cypress-plugin-api](images/cy_api_2.png)
 
@@ -262,14 +262,15 @@ You can disable schema validation in your tests by setting the Cypress environme
 
 The environment variable can be set in various locations, depending on the specific contexts in which you want to disable the functionality.
 - **Cypress Configuration File (`cypress.config.js`)**: This is useful for applying settings globally across all tests.
-- **Cypress Environment File `cypress.env.json`**: Use this for setting environment variables to be accessible during specific test runs.
+- **Cypress Environment File `(cypress.env.json)`**: Use this for setting environment variables to be accessible during specific test runs.
 - **Command Line Interface (CLI) using `--env`**: This is ideal for temporary overrides during specific test executions without affecting other configurations.
 - **Within Test Configuration**: Set it directly in the test file for precise control over individual test behaviors.
 
-When schema validation is disabled for a test, the Cypress log and the browser console will display a screen like this:
+When schema validation is disabled for a test, the Cypress log and the browser console will display the following message:
 
 ![JSON Schema Validation Disabled](images/disabled.png)
 
+&nbsp; 
 
 ## License
 
