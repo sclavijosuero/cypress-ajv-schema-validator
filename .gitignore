@@ -1,4 +1,18 @@
-node_modules/
-cypress/screenshots/
-cypress/videos/
-cypress/downloads/
+# Cypress generated files
+/cypress/videos/
+/cypress/screenshots/
+/cypress/downloads/
+
+# Node.js dependencies
+/node_modules/
+
+# Doc videos
+/videos/
+
+# Editor-specific files
+/.vscode/
+/.idea/
+
+# Common ignore patterns for Windows and macOS
+.DS_Store
+Thumbs.db

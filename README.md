@@ -4,7 +4,10 @@ A Cypress plugin for API testing to validate the API response against Plain JSON
 
 ![Overview](images/overview.png)
 
-For a detailed guide on how to use this plugin, check out my blog post, ["CYPRESS-AJV-SCHEMA-VALIDATOR Plugin: The Brave Vigilante for Your API Contracts,"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-plugin-the-brave-vigilante-for-your-api-contracts-5cfe) on my Cypress blog. There you'll find comprehensive information about setting up and getting the most out of this plugin.
+For a detailed guide on setting up and using this plugin to maximize its benefits, please refer to my articles:
+  - ["CYPRESS-AJV-SCHEMA-VALIDATOR Plugin: The Brave Vigilante for Your API Contracts"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-plugin-the-brave-vigilante-for-your-api-contracts-5cfe)
+  - ["CYPRESS-AJV-SCHEMA-VALIDATOR v1.2.0: Boost Debugging Skills from Vigilante to Superhero with Advanced Schema Error Insights!"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-v120-boost-debugging-skills-from-vigilante-to-superhero-with-advanced-schema-error-insights-1hld)
+
 
 ## Main Features
 
@@ -249,11 +252,17 @@ When the Cypress environment variable `enableMismatchesOnUI` is set to `true`, a
 
 ![Plugin @bahmutov/cy-api](images/cy_api_1.png)
 
+It will follow the the same color legend as in the Cypress Log.
+
+![Plugin @bahmutov/cy-api](images/cy_api_1_details.png)
+
 ### cypress-plugin-api Plugin
 
 Similarly, when the Cypress environment variable `enableMismatchesOnUI` is set to `true`, and the `cypress-plugin-api` plugin is imported into your `cypress/support/commands.js` or test file, schema violations will be shown in the plugin's UI.
 
 ![Plugin cypress-plugin-api](images/cy_api_2.png)
+
+![Plugin @bahmutov/cy-api](images/cy_api_2_details.png)
 
 
 ## Disable JSON Schema Validation in your Tests
@@ -282,6 +291,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ### [1.2.0]
 - Integration with bahmutov/cy-api and filiphric/cypress-plugin-api to show JSON violations directly in their outputs on the UI.
 - New Cypress environment variable to disable schema validation.
+- Change in the icons to flag schema issues.
 
 ### [1.1.1]
 - Added details to documentation.
