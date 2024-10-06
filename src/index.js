@@ -3,6 +3,8 @@
 import Ajv from "ajv"
 import addFormats from "ajv-formats"
 
+import hljs from 'highlight.js'
+
 import './custom-log.js'
 
 // Create a new Ajv instance (Show all validation errors and disable strict mode)
@@ -20,9 +22,12 @@ addFormats(ajv)
 
 const iconPassed = '✔️'
 const iconFailed = '❌'
-const iconPropertyError = '👉'
-const iconPropertyMissing = '🗑️'
+const iconPropertyError = '🟠'
+const iconPropertyMissing = '🟥'
 const iconMoreErrors = '➕'
+
+const warningDisableSchemaValidation = `⛔ API SCHEMA VALIDATION DISABLED ⛔`
+const msgDisableSchemaValidation = '- The Cypress environment variable "disableSchemaValidation" has been set to true.'
 
 // ------------------------------------
 // PUBLIC CUSTOM COMMANDS
@@ -74,15 +79,25 @@ Cypress.Commands.add("validateSchema",
     { prevSubject: true },
     (response, schema, path) => {
 
-        const data = response.body
+        if (Cypress.env('disableSchemaValidation')) {
+            cy.colorLog(msgDisableSchemaValidation,
+                '#e0e030',
+                { displayName: warningDisableSchemaValidation }
+            )
 
-        // Validate the response body against the schema
-        const errors = validateSchema(data, schema, path)
+            console.log(`${warningDisableSchemaValidation} ${msgDisableSchemaValidation}`)
+        } else {
 
-        // Log the validation result
-        _logValidationResult(data, errors)
+            const data = response.body
 
-        // Return the response object so it can be chained with other commands
+            // Validate the response body against the schema
+            const errors = validateSchema(data, schema, path)
+
+            // Log the validation result
+            _logValidationResult(data, errors)
+
+            // Return the response object so it can be chained with other commands
+        }
         return cy.wrap(response, { log: false })
     }
 )
@@ -137,6 +152,12 @@ Cypress.Commands.add("validateSchema",
  * });
  */
 export const validateSchema = (data, schema, path) => {
+
+    if (Cypress.env('disableSchemaValidation') === true) {
+        // We need to check also here since validateSchema() is a public function
+        console.log(warningDisableSchemaValidation)
+        return null
+    }
 
     if (schema == null) {
         throw new Error(`You must provide a valid schema parameter!`);
@@ -343,25 +364,64 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
         )
     } else {
         // FAILED
+        let cy_api_type
+
+        let $original, $cloned, $elem
+        const enableMismatchesOnUI = mustEnableMismatchesOnUI()
+
+        if (enableMismatchesOnUI) {
+            $original = Cypress.$('[id="api-plugin-root"] [id="api-view"]')
+            if ($original.length !== 0) {
+                cy_api_type = "filip"
+                // Create clone of the DOM tree
+                $cloned = $original.clone()
+                // Find the last section in the clone to add the mismatches
+                $elem = $cloned.find('section:last-of-type [data-cy="responseBody"] code > details > summary')
+            } else {
+                $original = Cypress.$('.cy-api-response:last-of-type pre')
+                if ($original.length !== 0) {
+                    cy_api_type = "gleb"
+                }
+            }
+        }
 
         // Create a copy of the data validated to show the mismatches
         const dataMismatches = Cypress._.cloneDeep(data)
+
         errors.forEach(error => {
-            let instancePath = error.instancePath.replace(/\//g, '.').replace(/^\./, '')
+            let instancePathArray = error.instancePath.replace(/^\//, '').split('/') // Remove the first '/' from the instance path "/0/name" => "0/name"
+            let instancePath = instancePathArray.join('.')
 
             let errorDescription
             let value = Cypress._.get(data, instancePath)
 
             if (error.keyword === 'required') {
                 const missingProperty = error.params.missingProperty
-                instancePath = (instancePath === "")  ? missingProperty : `${instancePath}.${missingProperty}`
-                errorDescription =`${iconPropertyMissing} Missing property "${missingProperty}"`
+                instancePath = (instancePath === "") ? missingProperty : `${instancePath}.${missingProperty}`
+
+                errorDescription = `${iconPropertyMissing} Missing property '${missingProperty}'`
             } else {
                 const message = error.message
-                errorDescription = `${iconPropertyError} ${JSON.stringify(value)} ${message}`
+                errorDescription = `${iconPropertyError} ${String(JSON.stringify(value)).replaceAll("\"", "'")} ${message}` // We also use String() to handle the case of undefined values
             }
             Cypress._.set(dataMismatches, instancePath, errorDescription)
+
+            if (enableMismatchesOnUI && $elem && $elem.length) {
+                // Show in the API View the data with the mismatches
+                if (cy_api_type === "filip") {
+                    showDataMismatchesApiViewFilip($elem, instancePathArray, errorDescription, error, 0)
+                }
+            }
         })
+
+        if (enableMismatchesOnUI) {
+            // Replace the original DOM tree with the cloned one with the mismatches
+            if (cy_api_type === "filip") {
+                $original.replaceWith($cloned)
+            } else if (cy_api_type === "gleb") {
+                $original.replaceWith(Cypress.$(transformDataToHtmlGleb(dataMismatches)))
+            }
+        }
 
         // Show in Cypress Log an error message saying that the schema validation failed and total number of errors
         // On click, it will show in the console:
@@ -387,9 +447,10 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
         // Show in Cypress Log the first 'maxErrorsToShow' as provided by AJV
         errorsToShow.forEach(error => {
             const iconError = (error.keyword) === 'required' ? iconPropertyMissing : iconPropertyError
+            const colorError = (error.keyword) === 'required' ? '#f58e8e' : '#ee930a'
 
             cy.colorLog(`${JSON.stringify(error, "", 1)}`,
-                '#f58e8e',
+                colorError,
                 { displayName: iconError, info: { schema_error: error } }
             )
         })
@@ -409,6 +470,69 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
     }
 }
 
+
+
+const transformDataToHtmlGleb = (jsonObject) => {
+    const fontStyles = `font-weight: bold; font-size: 1.3em;`
+
+    let json = hljs.highlight(JSON.stringify(jsonObject, null, 4), {
+        language: 'json',
+    }).value
+
+    const regexpError = RegExp(`>&quot;${iconPropertyError}`, 'g')
+    json = json.replaceAll(regexpError, (match) => {
+        return ` style="${fontStyles} color: #ee930a;"${match}`
+    });
+
+    const regexpMissing = RegExp(`>&quot;${iconPropertyMissing}`, 'g')
+    json = json.replaceAll(regexpMissing, (match) => {
+        return ` style="${fontStyles}; color: #c10000;"${match}`
+    });
+
+    return `<pre class="hljs">${json}</pre>`
+};
+
+
+const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescription, error, depth) => {
+    const fontStyles = `font-weight: bold; font-size: 1.3em;`
+    let path0 = instancePathArray.shift()
+
+    if ($content.hasClass('bracket')) {
+        // It's an Array
+        const $elem = $content.siblings(`details`).eq(parseInt(path0))
+
+        if ($elem.length === 0) {
+            Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: #ffcc80;">👉 Array ${error.message} </span>`).insertAfter($content.parent().next())
+        } else {
+            showDataMismatchesApiViewFilip($elem.children('summary'), instancePathArray, errorDescription, error, depth + 1)
+        }
+    }
+    else if ($content.hasClass('brace')) {
+        // It's an Object
+        const $elem = $content.siblings(`.token.property:contains(\"${path0}\")`).filter((i, e) => {  // For exact match
+            return Cypress.$(e).text() === `"${path0}"`
+        })
+
+        if ($elem.length === 0) {
+            // Missing property
+            Cypress.$(`<br><span class="line-number text-slate-700 select-none contents align-top">      </span><span style="${fontStyles} padding-left: ${25 + (depth - 1) * 14}px; color: #ff4d4d;">"${error.params.missingProperty}": ${errorDescription} </span>`).insertAfter($content)
+        } else {
+            let $value = $elem.next().next()
+            if ($value.is('details')) {
+                $value = $value.children('summary')
+            }
+
+            showDataMismatchesApiViewFilip($value, instancePathArray, errorDescription, error, depth + 1)
+        }
+    } else {
+        // Error in a property
+        Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: orange;">${errorDescription} </span>`).insertAfter($content)
+    }
+}
+
+const mustEnableMismatchesOnUI = () => {
+    return Cypress.config('isInteractive') && Cypress.env('enableMismatchesOnUI')
+}
 
 /**
  * Generates a random string with 10 characters.
