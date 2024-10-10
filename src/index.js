@@ -26,8 +26,12 @@ const iconPropertyError = '🟠'
 const iconPropertyMissing = '🟥'
 const iconMoreErrors = '➕'
 
-const warningDisableSchemaValidation = `⛔ API SCHEMA VALIDATION DISABLED ⛔`
+const warningDisableSchemaValidation = `⚠️ API SCHEMA VALIDATION DISABLED ⚠️`
 const msgDisableSchemaValidation = '- The Cypress environment variable "disableSchemaValidation" has been set to true.'
+const errorNoValidApiResponse = 'The element chained to the cy.validateSchema() command is expected to be an API response!'
+const invalidSchemaParameter = `You must provide a valid schema!`
+const errorInvalidSchemaParameters = `You must provide valid schema parameters (missing 'endpoint', 'method' or 'status' params)!`
+const errorResponseBodyAgainstSchema ='The response body is not valid against the schema!'
 
 // ------------------------------------
 // PUBLIC CUSTOM COMMANDS
@@ -87,6 +91,11 @@ Cypress.Commands.add("validateSchema",
 
             console.log(`${warningDisableSchemaValidation} ${msgDisableSchemaValidation}`)
         } else {
+            // Check if it is a valid API Response object
+            if (response == null || !(response.hasOwnProperty('body') && response.hasOwnProperty('status') && response.hasOwnProperty('headers'))) {
+                console.log(errorNoValidApiResponse)
+                throw new Error(errorNoValidApiResponse)
+            }
 
             const data = response.body
 
@@ -152,7 +161,6 @@ Cypress.Commands.add("validateSchema",
  * });
  */
 export const validateSchema = (data, schema, path) => {
-
     if (Cypress.env('disableSchemaValidation') === true) {
         // We need to check also here since validateSchema() is a public function
         console.log(warningDisableSchemaValidation)
@@ -160,7 +168,8 @@ export const validateSchema = (data, schema, path) => {
     }
 
     if (schema == null) {
-        throw new Error(`You must provide a valid schema parameter!`);
+        console.log(errorInvalidSchema)
+        throw new Error(errorInvalidSchema)
     }
 
     if (path != null) {
@@ -238,7 +247,8 @@ export const validateSchema = (data, schema, path) => {
 const _getSchemaFromSpecificationDoc = (schema, { endpoint, method, status }) => {
 
     if (endpoint == null || method == null || status == null) {
-        throw new Error(`You must provide valid schema parameters (missing 'endpoint', 'method' or 'status' params)!`);
+        console.log(errorInvalidSchemaParameters)
+        throw new Error(errorInvalidSchemaParameters)
     }
 
     // Normalize the method to lowercase for Swagger and OpenAPI documents
@@ -465,7 +475,8 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
 
         // Throw an error to fail the test
         cy.then(() => {
-            throw new Error('The response body is not valid against the schema!')
+            console.log(errorResponseBodyAgainstSchema)
+            throw new Error(errorResponseBodyAgainstSchema)
         })
     }
 }
