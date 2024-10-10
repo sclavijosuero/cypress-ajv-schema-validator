@@ -105,7 +105,7 @@ npm install -D cypress-ajv-schema-validator
 
 #### `cy.validateSchema(schema, path)`
 
-Validates the response body against the provided schema.
+It is expected to be chained to an API response (from a `cy.request()` or `cy.api()`). It validates the response body against the provided schema.
 
 ##### Parameters
 
@@ -287,6 +287,11 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 
 ## Changelog
+
+### [1.3.0]
+- Improved error messages when not chained to an API response.
+- Updated icons for disable validation message.
+- Improved API documentation.
 
 ### [1.2.0]
 - Integration with bahmutov/cy-api and filiphric/cypress-plugin-api to show JSON violations directly in their outputs on the UI.
