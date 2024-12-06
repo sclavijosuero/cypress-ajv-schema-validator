@@ -91,8 +91,9 @@ Cypress.Commands.add("validateSchema",
 
             console.log(`${warningDisableSchemaValidation} ${msgDisableSchemaValidation}`)
         } else {
+            console.log(response)
             // Check if it is a valid API Response object
-            if (response == null || !(response.hasOwnProperty('body') && response.hasOwnProperty('status') && response.hasOwnProperty('headers'))) {
+            if (response == null || (!response.hasOwnProperty('body') && !response.hasOwnProperty('status') && !response.hasOwnProperty('headers'))) {
                 console.log(errorNoValidApiResponse)
                 throw new Error(errorNoValidApiResponse)
             }

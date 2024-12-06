@@ -1,6 +1,6 @@
 {
   "name": "cypress-ajv-schema-validator",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Lightweight API schema validator for Plain JSON schemas, Swagger schema documents, or OpenAPI schema documents using Ajv JSON Schema Validator",
   "main": "src/index.js",
   "types": "src/index.d.ts",
