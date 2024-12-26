@@ -8,6 +8,9 @@ For a detailed guide on setting up and using this plugin to maximize its benefit
   - ["CYPRESS-AJV-SCHEMA-VALIDATOR Plugin: The Brave Vigilante for Your API Contracts"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-plugin-the-brave-vigilante-for-your-api-contracts-5cfe)
   - ["CYPRESS-AJV-SCHEMA-VALIDATOR v1.2.0: Boost Debugging Skills from Vigilante to Superhero with Advanced Schema Error Insights!"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-v120-boost-debugging-skills-from-vigilante-to-superhero-with-advanced-schema-error-insights-1hld)
 
+Or the video:
+  - ["CYPRESS AJV SCHEMA VALIDATOR VIDEO TUTORIAL"](https://www.youtube.com/watch?v=Dd6MMZ6qd7g)
+
 
 ## Main Features
 
