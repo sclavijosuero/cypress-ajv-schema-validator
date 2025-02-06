@@ -291,7 +291,7 @@ const _getSchemaFromSpecificationDoc = (schema, { endpoint, method, status }) =>
         responseDef,
         schemaProperty
     )
-    if (schemaDef === undefined) {
+    if (schemaDef === undefined && status != 204) {
         throw new Error(`No schema definition found for path '${pathStatus}.${schemaProperty}'!`);
     }
 
