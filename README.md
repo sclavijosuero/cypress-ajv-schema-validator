@@ -11,6 +11,11 @@ For a detailed guide on setting up and using this plugin to maximize its benefit
 Or the video:
   - ["CYPRESS AJV SCHEMA VALIDATOR VIDEO TUTORIAL"](https://www.youtube.com/watch?v=Dd6MMZ6qd7g)
 
+---
+
+If you'd like to support my work, consider buying me a coffee or contributing to a training session, so I can keep learning and sharing cool stuff with all of you. Thank you for your support!
+
+<a href="https://www.buymeacoffee.com/sclavijosuero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 150px !important;" ></a>
 
 ## Main Features
 
