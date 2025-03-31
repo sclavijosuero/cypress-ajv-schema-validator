@@ -1,19 +1,9 @@
 /// <reference types="cypress" />
 
-import Ajv from "ajv"
-import addFormats from "ajv-formats"
-
 import hljs from 'highlight.js'
+import { validateSchema } from 'core-ajv-schema-validator'
 
 import './custom-log.js'
-
-// Create a new Ajv instance (Show all validation errors and disable strict mode)
-const ajv = new Ajv({ allErrors: true, strict: false })
-// Note: When AJV property strict is true, for some reason the Openapi shema validation fails not recognizing "components" (Error: strict mode: unknown keyword: "components").
-//       This does not happens in Swagger schema validation with the equivalent keyword "definitions".
-
-// Extend Ajv supported formats (E.g.: uuid, email, etc.)
-addFormats(ajv)
 
 
 // ------------------------------------
@@ -22,16 +12,19 @@ addFormats(ajv)
 
 const iconPassed = '✔️'
 const iconFailed = '❌'
-const iconPropertyError = '🟠'
-const iconPropertyMissing = '🟥'
 const iconMoreErrors = '➕'
+
+const issueStylesOverride = {
+    iconPropertyError: '😱',
+    colorPropertyError: '#ee930a',
+    iconPropertyMissing: '😡',
+    colorPropertyMissing: '#c10000'
+}
 
 const warningDisableSchemaValidation = `⚠️ API SCHEMA VALIDATION DISABLED ⚠️`
 const msgDisableSchemaValidation = '- The Cypress environment variable "disableSchemaValidation" has been set to true.'
 const errorNoValidApiResponse = 'The element chained to the cy.validateSchema() command is expected to be an API response!'
-const invalidSchemaParameter = `You must provide a valid schema!`
-const errorInvalidSchemaParameters = `You must provide valid schema parameters (missing 'endpoint', 'method' or 'status' params)!`
-const errorResponseBodyAgainstSchema ='The response body is not valid against the schema!'
+const errorResponseBodyAgainstSchema = 'The response body is not valid against the schema!'
 
 // ------------------------------------
 // PUBLIC CUSTOM COMMANDS
@@ -91,7 +84,6 @@ Cypress.Commands.add("validateSchema",
 
             console.log(`${warningDisableSchemaValidation} ${msgDisableSchemaValidation}`)
         } else {
-            console.log(response)
             // Check if it is a valid API Response object
             if (response == null || (!response.hasOwnProperty('body') && !response.hasOwnProperty('status') && !response.hasOwnProperty('headers'))) {
                 console.log(errorNoValidApiResponse)
@@ -101,10 +93,10 @@ Cypress.Commands.add("validateSchema",
             const data = response.body
 
             // Validate the response body against the schema
-            const errors = validateSchema(data, schema, path)
+            const validationResult = validateSchema(data, schema, path)
 
             // Log the validation result
-            _logValidationResult(data, errors)
+            _logValidationResult(data, validationResult)
 
             // Return the response object so it can be chained with other commands
         }
@@ -112,237 +104,30 @@ Cypress.Commands.add("validateSchema",
     }
 )
 
-// ------------------------------------
-// PUBLIC FUNCTIONS
-// ------------------------------------
-
 /**
- * Validates the given data against the provided schema.
- * @public
+ * Recursively replaces specific icon properties in the provided data structure with overrides
+ * based on the given issueStyles object. Supports strings, arrays, and objects.
  *
- * @param {any} data - The data to be validated.
- * @param {object} schema - The schema to validate against. Supported formats are plain JSON schema, Swagger, and OpenAPI documents. See https://ajv.js.org/json-schema.html for more information.
- * @param {object} [path] - The path object to the schema definition in a Swagger or OpenAPI document. Not required if the schema is a plain JSON schema.
- * @param {string} [path.endpoint] - The endpoint path.
- * @param {string} [path.method] - The HTTP method. If not provided, it will use 'GET'.
- * @param {integer} [path.status] - The response status code. If not provided, it will use 200
- * 
- * @returns {Array} - An array of validation errors, or null if the data is valid against the schema.
- * @throws {Error} - If any of the required parameters are missing or if the schema or schema definition is not found.
- *
- * @example
- * const schema = {
- *   "swagger": "2.0",
- *   "paths": {
- *     "/users": {
- *       "get": {
- *         "responses": {
- *           "200": {
- *             "schema": { $ref: "#/definitions/User" }
- *           }
- *         }
- *       }
- *     }
- *   },
- *   "definitions": {
- *     "User": {
- *       "type": "object",
- *       "properties": {
- *         "name": { "type": "string" },
- *         "age": { "type": "number" }
- *       }
- *     }
- *   }
- * }
- *
- * const path = { endpoint: '/users', method: 'GET', status: '200' };
- * 
- * cy.request('GET', `https://awesome.api.com/users`).then(response => {
- *   const errors = validateSchema(response.body, schema, path);
- * });
+ * @param {string|Array|Object} data - The data to process. Can be a string, an array, or an object.
+ * @param {Object} issueStyles - An object containing the icon properties to replace.
+ * @param {string} issueStyles.iconPropertyError - The icon property to replace for errors.
+ * @param {string} issueStyles.iconPropertyMissing - The icon property to replace for missing values.
+ * @returns {string|Array|Object} - The processed data with replaced icon properties.
  */
-export const validateSchema = (data, schema, path) => {
-    if (Cypress.env('disableSchemaValidation') === true) {
-        // We need to check also here since validateSchema() is a public function
-        console.log(warningDisableSchemaValidation)
-        return null
+const replaceIcons = (data, issueStyles) => {
+    if (typeof data === 'string') {
+        return data
+            .replaceAll(issueStyles.iconPropertyError, issueStylesOverride.iconPropertyError)
+            .replaceAll(issueStyles.iconPropertyMissing, issueStylesOverride.iconPropertyMissing);
+    } else if (Array.isArray(data)) {
+        return data.map(item => replaceIcons(item, issueStyles));
+    } else if (typeof data === 'object' && data !== null) {
+        return Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [key, replaceIcons(value, issueStyles)])
+        );
     }
-
-    if (schema == null) {
-        console.log(errorInvalidSchema)
-        throw new Error(errorInvalidSchema)
-    }
-
-    if (path != null) {
-        path.method = path.method || 'GET'
-        path.status = path.status || 200
-
-        // Check if the schema is a Swagger or OpenAPI document,
-        // otherwise the provided schema is a valid schema object (JSON schema) and can be used as is
-        if (schema.swagger || schema.openapi) {
-            // Extract the schema definition from the Swagger or OpenAPI document.
-            schema = _getSchemaFromSpecificationDoc(schema, path)
-        }
-    }
-
-    // Validate the response body against the schema
-    const { errors } = _validateSchemaAJV(schema, data)
-
-    return errors
-}
-
-
-// ------------------------------------
-// PRIVATE FUNCTIONS
-// ------------------------------------
-
-/**
- * Retrieves the schema definition for a given endpoint, method, and status from a Swagger or OpenAPI document.
- * @private
- *
- * @param {object} schema - The Swagger or OpenAPI document.
- * @param {object} path - The path object to the schema definition in a Swagger or OpenAPI document.
- * @param {string} path.endpoint - The endpoint path.
- * @param {string} path.method - The HTTP method.
- * @param {integer} path.status - The response status code.
- * 
- * @returns {object} - The merged schema definition with the components definitions.
- * @throws {Error} - If any of the required parameters are missing or if the schema or schema definition is not found.
- *
- * @example
- * const schema = {
- *   "swagger": "2.0",
- *   "paths": {
- *     "/users": {
- *       "get": {
- *         "responses": {
- *           "200": {
- *             "schema": { $ref: "#/definitions/User" }
- *           }
- *         }
- *       }
- *     }
- *   },
- *   "definitions": {
- *     "User": {
- *       "type": "object",
- *       "properties": {
- *         "name": { "type": "string" },
- *         "age": { "type": "number" }
- *       }
- *     }
- *   }
- * }
- *
- * const path = { endpoint: '/users', method: 'GET', status: '200' };
- *
- * const result = _getSchemaFromSpecificationDoc(schema, path);
- * console.log(result);
- * // Output: 
- * // {
- * //   $id: '/users:get:200',
- * //   type: 'object', properties: { name: { type: 'string' }, age: { type: 'number' } },
- * //   definitions: { User: { type: 'object', properties: { name: { type: 'string' }, age: { type: 'number' } } } }
- * // }
- */
-const _getSchemaFromSpecificationDoc = (schema, { endpoint, method, status }) => {
-
-    if (endpoint == null || method == null || status == null) {
-        console.log(errorInvalidSchemaParameters)
-        throw new Error(errorInvalidSchemaParameters)
-    }
-
-    // Normalize the method to lowercase for Swagger and OpenAPI documents
-    method = method.toLowerCase()
-
-    // Need to create a unique $id for each schema definition in AJV
-    let $id = `${_random()}:${endpoint}:${method}:${status}`
-
-    // Property name for the schema definition in the Swagger or OpenAPI document
-    let schemaProperty
-    // Object with the components (for a OpenAPI document) or the definitions (for a Swagger document) when there are $ref in the schema
-    let componentsDefinitions
-
-    if (schema.swagger) {
-        schemaProperty = 'schema'
-        componentsDefinitions = { definitions: schema.definitions }
-    } else if (schema.openapi) {
-        schemaProperty = 'content.application/json.schema'
-        componentsDefinitions = { components: schema.components }
-    }
-
-    // Paths where to find the response definition for the given endpoint, method and status
-    let pathStatus = `paths.${endpoint}.${method}.responses.${status}`
-    // Try "default" status if status is not found
-    let pathDefault = `paths.${endpoint}.${method}.responses.default`
-
-    // Get the response definition for the given endpoint, method and status
-    let responseDef = Cypress._.get(
-        schema,
-        pathStatus,
-        Cypress._.get(schema, pathDefault) // Try "default" status if status is not found
-    )
-    if (responseDef === undefined) {
-        throw new Error(`No response definition found for path '${pathStatus}' or ${pathDefault}'!`);
-    }
-
-    // Get the schema definition for the given endpoint, method and status
-    const schemaDef = Cypress._.get(
-        responseDef,
-        schemaProperty
-    )
-    if (schemaDef === undefined) {
-        throw new Error(`No schema definition found for path '${pathStatus}.${schemaProperty}'!`);
-    }
-
-    // Merge the schema definition with the components definitions as needed by AJV when there are $ref in the schema
-    schema = {
-        $id,
-        ...schemaDef,
-        ...componentsDefinitions
-    }
-
-    return schema
-}
-
-
-/**
- * Validates data against a JSON schema using AJV Schema validator.
- * @private
- *
- * @param {object} schema - The JSON schema to validate against.
- * @param {object} data - The data to be validated.
- * 
- * @returns {object} - An object containing the validation result and any errors: { valid, errors }.
- * 
- * @example
- * const schema = {
- *   "type": "object",
- *   "properties": {
- *     "name": { "type": "string" },
- *     "age": { "type": "number" }
- *   },
- *   "required": ["name"]
- * }
- *
- * const data = {
- *   name: 'John Wick',
- *   age: 49
- * }
- *
- * const validationResult = _validateSchemaAJV(schema, data)
- * console.log(validationResult.valid) // true
- * console.log(validationResult.errors) // null
- */
-const _validateSchemaAJV = (schema, data) => {
-    // Generate validating function from the schema
-    const validate = ajv.compile(schema)
-    // Validate the data using passed schema
-    const valid = validate(data)
-
-    return { valid, errors: validate.errors }
-}
-
+    return data;
+};
 
 /**
  * Logs the validation result and throws an error if the response body is not valid against the schema, otherwise logs a success message.
@@ -350,20 +135,23 @@ const _validateSchemaAJV = (schema, data) => {
  * @private
  *
  * @param {any} data - The data to be validated.
- * @param {Array} errors - An array of validation errors provided by AJV schema validator.
+ * @param {object} validationResults - An object containing:
+ * @param {Array} validationResults.errors - An array of validation errors, or null if the data is valid against the schema.
+ * @param {object} validationResults.dataMismatches - The original response data with all schema mismatches flagged directly.
+ * @param {object} validationResults.issueStyles - An object with the icons and HEX colors used to flag the issues. Includes the properties: iconPropertyError, colorPropertyError, iconPropertyMissing, and colorPropertyMissing.
+ * @param {Array} validationResults.issueStyles.iconPropertyError - The icon used to flag the property error.
+ * @param {Array} validationResults.issueStyles.colorPropertyError - The color used to flag the property error.
+ * @param {Array} validationResults.issueStyles.iconPropertyMissing - The icon used to flag the missing property.
+ * @param {Array} validationResults.issueStyles.colorPropertyMissing - The color used to flag the missing property.
  * @param {integer} [maxErrorsToShow=10] - The maximum number of errors to show in the log.
  * 
  * @throws {Error} - If the response body is not valid against the schema.
- *
- * @example
- * _logValidationResult(null);
- * // Logs: "✔️ PASSED - THE RESPONSE BODY IS VALID AGAINST THE SCHEMA."
- *
- * _logValidationResult([{ message: 'Invalid property: name' }]);
- * // Logs: "❌ FAILED - THE RESPONSE BODY IS NOT VALID AGAINST THE SCHEMA (Number of errors: 1)."
- * // Throws an error: The response body is not valid against the schema!
- */
-const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
+  */
+const _logValidationResult = (data, validationResults, maxErrorsToShow = 10) => {
+
+    let { errors, dataMismatches, issueStyles } = validationResults
+
+    dataMismatches = replaceIcons(dataMismatches, issueStyles);
 
     if (!errors) {
         // PASSED
@@ -396,34 +184,34 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
             }
         }
 
-        // Create a copy of the data validated to show the mismatches
-        const dataMismatches = Cypress._.cloneDeep(data)
+        const { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issueStylesOverride
 
-        errors.forEach(error => {
-            let instancePathArray = error.instancePath.replace(/^\//, '').split('/') // Remove the first '/' from the instance path "/0/name" => "0/name"
-            let instancePath = instancePathArray.join('.')
+        if (cy_api_type === "filip") {
+            // Filip's API View needs it's own processing to show the mismatches (similar logic as for package core-ajv-schema-validator)
 
-            let errorDescription
-            let value = Cypress._.get(data, instancePath)
+            errors.forEach(error => {
+                let instancePathArray = error.instancePath.replace(/^\//, '').split('/') // Remove the first '/' from the instance path "/0/name" => "0/name"
+                let instancePath = instancePathArray.join('.')
 
-            if (error.keyword === 'required') {
-                const missingProperty = error.params.missingProperty
-                instancePath = (instancePath === "") ? missingProperty : `${instancePath}.${missingProperty}`
+                let errorDescription
+                let value = Cypress._.get(data, instancePath)
 
-                errorDescription = `${iconPropertyMissing} Missing property '${missingProperty}'`
-            } else {
-                const message = error.message
-                errorDescription = `${iconPropertyError} ${String(JSON.stringify(value)).replaceAll("\"", "'")} ${message}` // We also use String() to handle the case of undefined values
-            }
-            Cypress._.set(dataMismatches, instancePath, errorDescription)
+                if (error.keyword === 'required') {
+                    const missingProperty = error.params.missingProperty
+                    instancePath = (instancePath === "") ? missingProperty : `${instancePath}.${missingProperty}`
 
-            if (enableMismatchesOnUI && $elem && $elem.length) {
-                // Show in the API View the data with the mismatches
-                if (cy_api_type === "filip") {
+                    errorDescription = `${iconPropertyMissing} Missing property '${missingProperty}'`
+                } else {
+                    const message = error.message
+                    errorDescription = `${iconPropertyError} ${String(JSON.stringify(value)).replaceAll("\"", "'")} ${message}` // We also use String() to handle the case of undefined values
+                }
+
+                if (enableMismatchesOnUI && $elem && $elem.length) {
+                    // Show in the API View the data with the mismatches
                     showDataMismatchesApiViewFilip($elem, instancePathArray, errorDescription, error, 0)
                 }
-            }
-        })
+            })
+        }
 
         if (enableMismatchesOnUI) {
             // Replace the original DOM tree with the cloned one with the mismatches
@@ -441,7 +229,7 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
         //   - User friendly representation of the mismatches in the data ❤️
         cy.colorLog(`**THE RESPONSE BODY IS NOT VALID AGAINST THE SCHEMA (Number of schema errors: ${errors.length}).**`,
             '#e34040',
-            { displayName: `${iconFailed} FAILED -`, info: { number_of_schema_errors: errors.length, schema_errors: errors, mismatches_in_data: dataMismatches } }
+            { displayName: `${iconFailed} FAILED -`, info: { number_of_schema_errors: errors.length, errors, dataMismatches, issueStyles: issueStylesOverride } }
         )
 
         // Logic to create two group of errors: the first 'maxErrorsToShow' and the rest of errors (to avoid showing a huge amount of errors in the Cypress Log)
@@ -458,7 +246,7 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
         // Show in Cypress Log the first 'maxErrorsToShow' as provided by AJV
         errorsToShow.forEach(error => {
             const iconError = (error.keyword) === 'required' ? iconPropertyMissing : iconPropertyError
-            const colorError = (error.keyword) === 'required' ? '#f58e8e' : '#ee930a'
+            const colorError = (error.keyword) === 'required' ? colorPropertyMissing : colorPropertyError
 
             cy.colorLog(`${JSON.stringify(error, "", 1)}`,
                 colorError,
@@ -469,7 +257,7 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
         // Show in Cypress Log the rest of errors if there are more than 'maxErrorsToShow' as provided by AJV
         if (rest_of_errors) {
             cy.colorLog(`...and ${errors.length - maxErrorsToShow} more errors.`,
-                '#f58e8e',
+                colorPropertyMissing,
                 { displayName: iconMoreErrors, info: { rest_of_errors } }
             )
         }
@@ -484,27 +272,54 @@ const _logValidationResult = (data, errors, maxErrorsToShow = 10) => {
 
 
 
+/**
+ * Transforms a JSON object into an HTML string with syntax highlighting and custom styles for specific properties.
+ *
+ * @param {Object} jsonObject - The JSON object to be transformed into HTML.
+ * @param {Object} issueStyles - An object containing style configurations for specific properties.
+ * @param {string} issueStyles.iconPropertyError - The property name to highlight as an error.
+ * @param {string} issueStyles.colorPropertyError - The color to apply to error properties.
+ * @param {string} issueStyles.iconPropertyMissing - The property name to highlight as missing.
+ * @param {string} issueStyles.colorPropertyMissing - The color to apply to missing properties.
+ * @returns {string} - An HTML string with syntax-highlighted JSON and custom styles applied.
+ */
 const transformDataToHtmlGleb = (jsonObject) => {
-    const fontStyles = `font-weight: bold; font-size: 1.3em;`
+    // let { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issueStyles
+    const { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issueStylesOverride
 
-    let json = hljs.highlight(JSON.stringify(jsonObject, null, 4), {
+    // colorPropertyError = issueStylesOverride.colorPropertyError || colorPropertyError
+    // colorPropertyMissing = issueStylesOverride.colorPropertyMissing || colorPropertyMissing
+
+    const fontStyles = `font-weight: bold; font-size: 1.3em;`
+    let jsonString = JSON.stringify(jsonObject, null, 4)
+
+    let json = hljs.highlight(jsonString, {
         language: 'json',
     }).value
 
     const regexpError = RegExp(`>&quot;${iconPropertyError}`, 'g')
     json = json.replaceAll(regexpError, (match) => {
-        return ` style="${fontStyles} color: #ee930a;"${match}`
+        return ` style="${fontStyles} color: ${colorPropertyError};"${match}`
     });
 
     const regexpMissing = RegExp(`>&quot;${iconPropertyMissing}`, 'g')
     json = json.replaceAll(regexpMissing, (match) => {
-        return ` style="${fontStyles}; color: #c10000;"${match}`
+        return ` style="${fontStyles}; color: ${colorPropertyMissing};"${match}`
     });
 
     return `<pre class="hljs">${json}</pre>`
 };
 
 
+/**
+ * Recursively traverses and displays data mismatches in an API view, highlighting errors in arrays, objects, or properties.
+ *
+ * @param {JQuery<HTMLElement>} $content - The current DOM element being processed.
+ * @param {string[]} instancePathArray - An array representing the path to the current data point in the JSON structure.
+ * @param {string} errorDescription - A description of the error to display.
+ * @param {Object} error - The error object containing details about the validation error.
+ * @param {number} depth - The current depth of recursion, used for indentation and styling.
+ */
 const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescription, error, depth) => {
     const fontStyles = `font-weight: bold; font-size: 1.3em;`
     let path0 = instancePathArray.shift()
@@ -514,7 +329,7 @@ const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescri
         const $elem = $content.siblings(`details`).eq(parseInt(path0))
 
         if ($elem.length === 0) {
-            Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: #ffcc80;">👉 Array ${error.message} </span>`).insertAfter($content.parent().next())
+            Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: ${issueStylesOverride.colorPropertyError};">👉 Array ${error.message} </span>`).insertAfter($content.parent().next())
         } else {
             showDataMismatchesApiViewFilip($elem.children('summary'), instancePathArray, errorDescription, error, depth + 1)
         }
@@ -527,7 +342,7 @@ const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescri
 
         if ($elem.length === 0) {
             // Missing property
-            Cypress.$(`<br><span class="line-number text-slate-700 select-none contents align-top">      </span><span style="${fontStyles} padding-left: ${25 + (depth - 1) * 14}px; color: #ff4d4d;">"${error.params.missingProperty}": ${errorDescription} </span>`).insertAfter($content)
+            Cypress.$(`<br><span class="line-number text-slate-700 select-none contents align-top">      </span><span style="${fontStyles} padding-left: ${25 + (depth - 1) * 14}px; color: ${issueStylesOverride.colorPropertyMissing};">"${error.params.missingProperty}": ${errorDescription} </span>`).insertAfter($content)
         } else {
             let $value = $elem.next().next()
             if ($value.is('details')) {
@@ -538,25 +353,17 @@ const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescri
         }
     } else {
         // Error in a property
-        Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: orange;">${errorDescription} </span>`).insertAfter($content)
+        Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: ${issueStylesOverride.colorPropertyError};">${errorDescription} </span>`).insertAfter($content)
     }
 }
 
+/**
+ * Determines whether mismatches should be enabled on the UI.
+ * This is based on the Cypress configuration and environment variables.
+ *
+ * @returns {boolean} - Returns `true` if the Cypress environment is interactive
+ * and the `enableMismatchesOnUI` environment variable is set; otherwise, `false`.
+ */
 const mustEnableMismatchesOnUI = () => {
     return Cypress.config('isInteractive') && Cypress.env('enableMismatchesOnUI')
-}
-
-/**
- * Generates a random string with 10 characters.
- * @private
- *
- * @returns {string} A random string.
- * 
- * @example
- * const randomString = _random();
- * console.log(randomString); // Output: "3hj7k9da1e"
- */
-const _random = () => {
-    return Math.random().toString(36).substring(10)
-
 }

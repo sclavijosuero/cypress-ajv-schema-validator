@@ -3,9 +3,7 @@
 // Import cypress-ajv-schema-validator plugin
 import '../../src/index.js'
 
-// import 'cypress-plugin-api'
 import '@bahmutov/cy-api'
-
 
 // API Doc: https://petstore.swagger.io/
 // OpenAPI: https://petstore.swagger.io/v2/swagger.json

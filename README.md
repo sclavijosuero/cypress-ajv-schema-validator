@@ -11,13 +11,13 @@ For a detailed guide on setting up and using this plugin to maximize its benefit
 
 ## Main Features
 
-- Cypress command **`cy.validateSchema()`** and utility function **`validateSchema()`** to report JSON Schema validation errors in the response obtained from any network request with `cy.request()`.
+- Cypress command **`cy.validateSchema()`** to report JSON Schema validation errors in the response obtained from any network request with `cy.request()`.
   
 - The command `cy.validateSchema()` is chainable and returns the original API response yielded.
   
 - Schema is provided as a JSON object, that could come from a Cypress fixture.
-  
-- Uses the **Ajv JSON Schema Validator** as its core engine.
+
+- Uses the **core-ajv-schema-validator** plugin, which leverages the **Ajv JSON Schema Validator** as its engine **_(NEW in v2.0.0)_**.
   
 - Supports schemas provided as **plain JSON schema**, **OpenAPI 3.0.1 schema document** and **Swagger 2.0 schema document**.
   
@@ -28,11 +28,11 @@ For a detailed guide on setting up and using this plugin to maximize its benefit
   -  Full list of schema errors as provided by Ajv.
   -  A nested tree view of the validated data, clearly indicating the errors and where they occurred in an easy-to-understand format.
 
-- New environment variable `disableSchemaValidation` to disable schema validation in your tests **(NEW in v1.2.0)**.
+- New environment variable `disableSchemaValidation` to disable schema validation in your tests **_(NEW in v1.2.0)_**.
 
 - Provides full integration with **Gleb Bahmutov**'s [@bahmutov/cy-api](https://github.com/bahmutov/cy-api) and **Filip Hric**'s [cypress-plugin-api](https://github.com/filiphric/cypress-plugin-api) plugins, enabling JSON schema validations to be performed directly after the `cy.api()` command.
   
-  When enabled via the new environment variable `enableMismatchesOnUI`, schema errors are displayed directly in the user interfaces of these plugins **(NEW in v1.2.0)**.
+  When enabled via the new environment variable `enableMismatchesOnUI`, schema errors are displayed directly in the user interfaces of these plugins **_(NEW in v1.2.0)_**.
 
 > ⭐⭐⭐⭐⭐
 > Example usage with these two API plugins:
@@ -101,13 +101,11 @@ npm install -D cypress-ajv-schema-validator
 
 ## API Reference
 
-### Custom Commands
-
-#### `cy.validateSchema(schema, path)`
+### `cy.validateSchema(schema, path)`
 
 It is expected to be chained to an API response (from a `cy.request()` or `cy.api()`). It validates the response body against the provided schema.
 
-##### Parameters
+#### Parameters
 
 - `schema` (object): The schema to validate against. Supported formats are plain JSON schema, Swagger, and OpenAPI documents.
 - `path` (object, optional): This second parameter only applies to Swagger or OpenAPI documents. 
@@ -116,11 +114,11 @@ It is expected to be chained to an API response (from a `cy.request()` or `cy.ap
   - `method` (string, optional): The HTTP method. Defaults to 'GET'.
   - `status` (integer, optional): The response status code. If not provided, defaults to 200.
 
-##### Returns
+#### Returns
 
 - `Cypress.Chainable`: The response object wrapped in a Cypress.Chainable.
 
-##### Throws
+#### Throws
 
 - `Error`: If any of the required parameters are missing or if the schema or schema definition is not found.
 
@@ -142,50 +140,6 @@ Using the path defined by `{ endpoint, method, status }`, the plugin will automa
 
 ![Path to the schema definition](images/path.png)
 
-### Functions
-
-#### `validateSchema(data, schema, path)`
-
-Validates the given data against the provided schema.
-
-##### Parameters
-
-- `data` (any): The data to be validated.
-- `schema` (object): The schema to validate against.
-- `path` (object, optional): The path object to the schema definition in a Swagger or OpenAPI document.
-  - `endpoint` (string, optional): The endpoint path.
-  - `method` (string, optional): The HTTP method. Defaults to 'GET'.
-  - `status` (integer, optional): The response status code. Defaults to 200.
-
-##### Returns
-
-- `Array`: An array of validation errors, or null if the data is valid against the schema.
-
-##### Throws
-
-- `Error`: If any of the required parameters are missing or if the schema or schema definition is not found.
-
-Example providing a Plain JSON schema:
-
-```js
-cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
-  const data = response.body
-  const errors = validateSchema(data, schema);
-  expect(errors).to.have.length(0); // Assertion to ensure no validation errors
-});
-```
-
-Example providing an OpenAPI 3.0.1 or Swagger 2.0 schema documents and path to the schema definition:
-
-```js
-cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
-  const data = response.body
-  const errors = validateSchema(data, schema, { endpoint: '/users/{id}', method: 'GET', status: 200 });
-  expect(errors).to.have.length(0); // Assertion to ensure no validation errors
-});
-```
-
-
 ## Usage Examples
 
 For detailed usage examples, check the document [USAGE-EXAMPLES.md](USAGE-EXAMPLES.md).
@@ -197,8 +151,6 @@ The examples included are for using:
 - `cy.validateSchema()` command with an **OpenAPI 3.0.1 schema** document.
   
 - `cy.validateSchema()` command with a **Swagger 2.0 schema** document.
-
-- `validateSchema()` function with an **OpenAPI 3.0.1 schema** document.
   
 - `cy.validateSchema()` command in conjunction with **`cy.api()` from the `cypress-plugin-api` or `@bahmutov/cy-api` plugins**.
 
@@ -217,7 +169,7 @@ When a test passes, the Cypress log will show the message: "✔️ **PASSED - TH
 
 When a test fails, the Cypress log will show the message: "❌ **FAILED - THE RESPONSE BODY IS NOT VALID AGAINST THE SCHEMA**"; indicating the total number of errors: _(Number of schema errors: N_).
 
-Also, the Cypress log will show an entry for each of the individual schema validation errors as provided by Ajv. The errors that correspond to missing fields in the data validated are marked with the symbol 🟥, and the rest of the errors with the symbol 🟠.
+Also, the Cypress log will show an entry for each of the individual schema validation errors as provided by Ajv. The errors that correspond to missing fields in the data validated are marked with the symbol 😡, and the rest of the errors with the symbol 😱.
 
 ![Test Failed Overview](images/error11.png)
 
@@ -287,6 +239,10 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 
 ## Changelog
+
+### [2.0.0]
+- Remove public API function **`validateSchema()`**. The function `validateSchema()` is now available in the plugin `core-ajv-schema-validator`.
+- Change in the icons for property error 😱, and property missing 😡.
 
 ### [1.4.0]
 - Added types for command validateSchema (contribution by Murat K Ozcan).

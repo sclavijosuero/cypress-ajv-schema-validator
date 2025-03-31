@@ -113,57 +113,6 @@ describe('API Schema Validation with Swagger 2.0', () => {
 });
 ```
 
-### Example: Using `validateSchema` Function
-
-#### OpenAPI 3.0.1
-
-```js
-import validateSchema from 'cypress-ajv-schema-validator';
-
-describe('API Schema Validation Function', () => {
-  it('should validate the user data using validateSchema function', () => {
-    const schema = {
-      "openapi": "3.0.1",
-      "paths": {
-        "/users/{id}": {
-          "get": {
-            "responses": {
-              "200": {
-                "content": {
-                  "application/json": {
-                    "schema": { "$ref": "#/components/schemas/User" }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "components": {
-        "schemas": {
-          "User": {
-            "type": "object",
-            "properties": {
-              "name": { "type": "string" },
-              "age": { "type": "number" }
-            },
-            "required": ["name", "age"]
-          }
-        }
-      }
-    };
-
-    const path = { endpoint: '/users/{id}', method: 'GET', status: 200 };
-
-    cy.request('GET', 'https://awesome.api.com/users/1').then(response => {
-      const errors = validateSchema(response.body, schema, path);
-      
-      expect(errors).to.have.length(0); // Assertion to ensure no validation errors
-    });
-  });
-});
-```
-
 ### Example: Using `cy.api()` from Plugin `cypress-plugin-api` or `@bahmutov/cy-api`
 
 ```js
