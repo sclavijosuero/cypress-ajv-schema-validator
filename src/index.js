@@ -138,11 +138,9 @@ const replaceIcons = (data, issueStyles) => {
  * @param {object} validationResults - An object containing:
  * @param {Array} validationResults.errors - An array of validation errors, or null if the data is valid against the schema.
  * @param {object} validationResults.dataMismatches - The original response data with all schema mismatches flagged directly.
- * @param {object} validationResults.issueStyles - An object with the icons and HEX colors used to flag the issues. Includes the properties: iconPropertyError, colorPropertyError, iconPropertyMissing, and colorPropertyMissing.
+ * @param {object} validationResults.issueStyles - An object with the icons and HEX colors used to flag the issues. Includes the properties: iconPropertyError, and iconPropertyMissing.
  * @param {Array} validationResults.issueStyles.iconPropertyError - The icon used to flag the property error.
- * @param {Array} validationResults.issueStyles.colorPropertyError - The color used to flag the property error.
  * @param {Array} validationResults.issueStyles.iconPropertyMissing - The icon used to flag the missing property.
- * @param {Array} validationResults.issueStyles.colorPropertyMissing - The color used to flag the missing property.
  * @param {integer} [maxErrorsToShow=10] - The maximum number of errors to show in the log.
  * 
  * @throws {Error} - If the response body is not valid against the schema.
@@ -229,7 +227,7 @@ const _logValidationResult = (data, validationResults, maxErrorsToShow = 10) => 
         //   - User friendly representation of the mismatches in the data ❤️
         cy.colorLog(`**THE RESPONSE BODY IS NOT VALID AGAINST THE SCHEMA (Number of schema errors: ${errors.length}).**`,
             '#e34040',
-            { displayName: `${iconFailed} FAILED -`, info: { number_of_schema_errors: errors.length, errors, dataMismatches, issueStyles: issueStylesOverride } }
+            { displayName: `${iconFailed} FAILED -`, info: { number_of_schema_errors: errors.length, ajv_errors: errors, data_mismatches: dataMismatches } }
         )
 
         // Logic to create two group of errors: the first 'maxErrorsToShow' and the rest of errors (to avoid showing a huge amount of errors in the Cypress Log)
@@ -276,19 +274,11 @@ const _logValidationResult = (data, validationResults, maxErrorsToShow = 10) => 
  * Transforms a JSON object into an HTML string with syntax highlighting and custom styles for specific properties.
  *
  * @param {Object} jsonObject - The JSON object to be transformed into HTML.
- * @param {Object} issueStyles - An object containing style configurations for specific properties.
- * @param {string} issueStyles.iconPropertyError - The property name to highlight as an error.
- * @param {string} issueStyles.colorPropertyError - The color to apply to error properties.
- * @param {string} issueStyles.iconPropertyMissing - The property name to highlight as missing.
- * @param {string} issueStyles.colorPropertyMissing - The color to apply to missing properties.
+
  * @returns {string} - An HTML string with syntax-highlighted JSON and custom styles applied.
  */
 const transformDataToHtmlGleb = (jsonObject) => {
-    // let { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issueStyles
     const { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issueStylesOverride
-
-    // colorPropertyError = issueStylesOverride.colorPropertyError || colorPropertyError
-    // colorPropertyMissing = issueStylesOverride.colorPropertyMissing || colorPropertyMissing
 
     const fontStyles = `font-weight: bold; font-size: 1.3em;`
     let jsonString = JSON.stringify(jsonObject, null, 4)
@@ -321,6 +311,8 @@ const transformDataToHtmlGleb = (jsonObject) => {
  * @param {number} depth - The current depth of recursion, used for indentation and styling.
  */
 const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescription, error, depth) => {
+    const { colorPropertyError, colorPropertyMissing } = issueStylesOverride
+
     const fontStyles = `font-weight: bold; font-size: 1.3em;`
     let path0 = instancePathArray.shift()
 
@@ -329,7 +321,7 @@ const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescri
         const $elem = $content.siblings(`details`).eq(parseInt(path0))
 
         if ($elem.length === 0) {
-            Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: ${issueStylesOverride.colorPropertyError};">👉 Array ${error.message} </span>`).insertAfter($content.parent().next())
+            Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: ${colorPropertyError};">👉 Array ${error.message} </span>`).insertAfter($content.parent().next())
         } else {
             showDataMismatchesApiViewFilip($elem.children('summary'), instancePathArray, errorDescription, error, depth + 1)
         }
@@ -342,7 +334,7 @@ const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescri
 
         if ($elem.length === 0) {
             // Missing property
-            Cypress.$(`<br><span class="line-number text-slate-700 select-none contents align-top">      </span><span style="${fontStyles} padding-left: ${25 + (depth - 1) * 14}px; color: ${issueStylesOverride.colorPropertyMissing};">"${error.params.missingProperty}": ${errorDescription} </span>`).insertAfter($content)
+            Cypress.$(`<br><span class="line-number text-slate-700 select-none contents align-top">      </span><span style="${fontStyles} padding-left: ${25 + (depth - 1) * 14}px; color: ${colorPropertyMissing};">"${error.params.missingProperty}": ${errorDescription} </span>`).insertAfter($content)
         } else {
             let $value = $elem.next().next()
             if ($value.is('details')) {
@@ -353,7 +345,7 @@ const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescri
         }
     } else {
         // Error in a property
-        Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: ${issueStylesOverride.colorPropertyError};">${errorDescription} </span>`).insertAfter($content)
+        Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: ${colorPropertyError};">${errorDescription} </span>`).insertAfter($content)
     }
 }
 

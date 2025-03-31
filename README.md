@@ -42,17 +42,17 @@ For a detailed guide on setting up and using this plugin to maximize its benefit
 
 &nbsp; 
 
-### About JSON Schemas and Ajv JSON Schema Validator
+## About JSON Schemas and Ajv JSON Schema Validator
 
-#### JSON Schema
+### JSON Schema
 
 JSON Schema is a hierarchical, declarative language that describes and validates JSON data.
 
-#### OpenAPI 3.0.1 and Swagger 2.0 Schema Documents
+### OpenAPI 3.0.1 and Swagger 2.0 Schema Documents
 
 The OpenAPI Specification (formerly Swagger Specification) are schema documents to describe your entire API (in JSON format or XML format). So a schema document will contain multiple schemas, one for each supported combination of **_Endpoint - Method - Expected Response Status_** (also called _path_) by that API.
 
-#### Ajv JSON Schema Validator
+### Ajv JSON Schema Validator
 
 AJV, or Another JSON Schema Validator, is a JavaScript library that validates data objects against a JSON Schema structure.
 
