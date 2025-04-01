@@ -2,5 +2,5 @@
 
 ## Integration with bahmutov/cy-api and filiphric/cypress-plugin-api Plugins
 
-https://github.com/user-attachments/assets/78520f37-030c-4d7a-b5ff-82e268a3d7c1
+https://github.com/user-attachments/assets/8d94c347-17b8-497d-a000-728d6f420c8f
 
