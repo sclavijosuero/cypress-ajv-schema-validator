@@ -2,7 +2,7 @@
 
 A Cypress plugin for API testing to validate the API response against Plain JSON schemas, Swagger documents, or OpenAPI documents using Ajv JSON Schema validator.
 
-![Overview](images/overview_a.png) 
+![Overview](videos/overview.gif) 
 
 For a detailed guide on setting up and using this plugin to maximize its benefits, please refer to my articles:
   - ["CYPRESS-AJV-SCHEMA-VALIDATOR Plugin: The Brave Vigilante for Your API Contracts"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-plugin-the-brave-vigilante-for-your-api-contracts-5cfe)
