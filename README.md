@@ -2,7 +2,7 @@
 
 A Cypress plugin for API testing to validate the API response against Plain JSON schemas, Swagger documents, or OpenAPI documents using Ajv JSON Schema validator.
 
-![Overview](images/overview.png)
+![Overview](images/overview.png) 
 
 For a detailed guide on setting up and using this plugin to maximize its benefits, please refer to my articles:
   - ["CYPRESS-AJV-SCHEMA-VALIDATOR Plugin: The Brave Vigilante for Your API Contracts"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-plugin-the-brave-vigilante-for-your-api-contracts-5cfe)
@@ -138,7 +138,7 @@ cy.request('GET', 'https://awesome.api.com/users/1')
 
 Using the path defined by `{ endpoint, method, status }`, the plugin will automatically take the schema `$ref` for that definition, find it in the `components` section, and use it in the schema validation.
 
-![Path to the schema definition](images/path.png)
+![Path to the schema definition](images/path.png) 
 
 ## Usage Examples
 
@@ -163,7 +163,7 @@ Here are some screenshots of schema validation tests run in Cypress.
 
 When a test passes, the Cypress log will show the message: "✔️ **PASSED - THE RESPONSE BODY IS VALID AGAINST THE SCHEMA.**".
 
-![Test Passed](images/pass1.png)
+![Test Passed](images/pass1.png) 
 
 ### Test Failed
 
@@ -171,7 +171,7 @@ When a test fails, the Cypress log will show the message: "❌ **FAILED - THE RE
 
 Also, the Cypress log will show an entry for each of the individual schema validation errors as provided by Ajv. The errors that correspond to missing fields in the data validated are marked with the symbol 😡, and the rest of the errors with the symbol 😱.
 
-![Test Failed Overview](images/error11.png)
+![Test Failed Overview](images/error11.png) 
 
 #### Detailed Error View in the Console
 
@@ -181,19 +181,19 @@ If you open the Console in the browser DevTools, and click on the summary line f
 - The full list of errors as provided by the Ajv.
 - A user-friendly view of the mismatches between the validated data and the JSON schema, highlighting where each validation error occurred and the exact reason for the mismatch.
 
-![Test Failed Details](images/error12.png)
+![Test Failed Details](images/error12.png) 
 
 ### Test Failed with More than 10 Errors
 
 When there are more than 10 schema validation errors, the Cypress log will show only the first 10 and, at the end of the list, an additional line indicating "**...and _N_ more errors.**".
 
-![Test Failed Many Errors](images/error21.png)
+![Test Failed Many Errors](images/error21.png) 
 
 #### More Errors in the Console
 
 When clicking on the "**...and N more errors.**" line in the Cypress log, the browser console will show additional details for the errors grouped under that entry as provided by Ajv.
 
-![More Errors in Console](images/error23.png)
+![More Errors in Console](images/error23.png) 
 
 
 ## Integration with Gleb Bahmutov's `@bahmutov/cy-api` and Filip Hric's `cypress-plugin-api` Plugins
@@ -202,19 +202,19 @@ When clicking on the "**...and N more errors.**" line in the Cypress log, the br
 
 When the Cypress environment variable `enableMismatchesOnUI` is set to `true`, and you have imported the `@bahmutov/cy-api` plugin into your `cypress/support/commands.js` or test file, schema validation mismatches will be displayed directly in the plugin's UI in a user-friendly format.
 
-![Plugin @bahmutov/cy-api](images/cy_api_1.png)
+![Plugin @bahmutov/cy-api](images/cy_api_1.png) 
 
 It will follow the the same color legend as in the Cypress Log.
 
-![Plugin @bahmutov/cy-api](images/cy_api_1_details.png)
+![Plugin @bahmutov/cy-api](images/cy_api_1_details.png) 
 
 ### cypress-plugin-api Plugin
 
 Similarly, when the Cypress environment variable `enableMismatchesOnUI` is set to `true`, and the `cypress-plugin-api` plugin is imported into your `cypress/support/commands.js` or test file, schema violations will be shown in the plugin's UI.
 
-![Plugin cypress-plugin-api](images/cy_api_2.png)
+![Plugin cypress-plugin-api](images/cy_api_2.png) 
 
-![Plugin @bahmutov/cy-api](images/cy_api_2_details.png)
+![Plugin @bahmutov/cy-api](images/cy_api_2_details.png) 
 
 
 ## Disable JSON Schema Validation in your Tests
@@ -229,7 +229,7 @@ The environment variable can be set in various locations, depending on the speci
 
 When schema validation is disabled for a test, the Cypress log and the browser console will display the following message:
 
-![JSON Schema Validation Disabled](images/disabled.png)
+![JSON Schema Validation Disabled](images/disabled.png) 
 
 &nbsp; 
 
