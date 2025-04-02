@@ -1,6 +1,6 @@
 # cypress-ajv-schema-validator
 
-A Cypress plugin for API testing to validate the API response against Plain JSON schemas, Swagger documents, or OpenAPI documents using Ajv JSON Schema validator.
+A Cypress plugin for API schema validation against plain JSON schemas, Swagger schema documents, or OpenAPI schema documents, leveraging the core-ajv-schema-validator powered by the Ajv JSON Schema Validator..
 
 ![Overview](videos/overview.gif) 
 
@@ -236,6 +236,24 @@ When schema validation is disabled for a test, the Cypress log and the browser c
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+
+## Contributing
+
+First off, thanks for taking the time to contribute!
+
+To contribute, please follow the best practices promoted by GitHub on the [Contributing to a project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project "Contributing to a project") page.
+
+And if you like the project but just don't have the time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which we would also be very happy about:
+- Star the project
+- Promote it on social media
+- Refer this project in your project's readme
+- Mention the project at local meetups and tell your friends/colleagues
+- Buying me a coffee or contributing to a training session, so I can keep learning and sharing cool stuff with all of you.
+
+<a href="https://www.buymeacoffee.com/sclavijosuero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 150px !important;" ></a>
+
+Thank you for your support!
 
 
 ## Changelog
