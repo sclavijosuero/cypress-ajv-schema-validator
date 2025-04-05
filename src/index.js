@@ -14,10 +14,10 @@ const iconPassed = '✔️'
 const iconFailed = '❌'
 const iconMoreErrors = '➕'
 
-const issueStylesOverride = {
-    iconPropertyError: '😱',
+const issuesStylesDefault = {
+    iconPropertyError: '⚠️',
     colorPropertyError: '#ee930a',
-    iconPropertyMissing: '😡',
+    iconPropertyMissing: '❌',
     colorPropertyMissing: '#c10000'
 }
 
@@ -39,6 +39,11 @@ const errorResponseBodyAgainstSchema = 'The response body is not valid against t
  * @param {string} [path.endpoint] - The endpoint path.
  * @param {string} [path.method] - The HTTP method. If not provided, it will use 'GET'.
  * @param {integer} [path.status] - The response status code. If not provided, it will use 200.
+ * @param {object} [validationResults.issuesStyles] - An object with the icons and HEX colors used to flag the issues.
+ * @param {string} [validationResults.issuesStyles.iconPropertyError] - The icon used to flag the property error.
+ * @param {string} [validationResults.issuesStyles.iconPropertyMissing] - The icon used to flag the missing property.
+ * @param {string} [validationResults.issuesStyles.colorPropertyError] - The HEX color used to flag the property error.
+ * @param {string} [validationResults.issuesStyles.colorPropertyMissing] - The HEX color used to flag the missing property.
  * 
  * @returns {Cypress.Chainable} - The response object wrapped in a Cypress.Chainable.
  * @throws {Error} - If any of the required parameters are missing or if the schema or schema definition is not found.
@@ -74,7 +79,7 @@ const errorResponseBodyAgainstSchema = 'The response body is not valid against t
  */
 Cypress.Commands.add("validateSchema",
     { prevSubject: true },
-    (response, schema, path) => {
+    (response, schema, path, issuesStyles) => {
 
         if (Cypress.env('disableSchemaValidation')) {
             cy.colorLog(msgDisableSchemaValidation,
@@ -92,11 +97,13 @@ Cypress.Commands.add("validateSchema",
 
             const data = response.body
 
+            issuesStyles = { ...issuesStylesDefault, ...issuesStyles }
+
             // Validate the response body against the schema
-            const validationResult = validateSchema(data, schema, path)
+            const validationResult = validateSchema(data, schema, path, issuesStyles)
 
             // Log the validation result
-            _logValidationResult(data, validationResult)
+            _logValidationResult(data, validationResult, issuesStyles)
 
             // Return the response object so it can be chained with other commands
         }
@@ -104,30 +111,6 @@ Cypress.Commands.add("validateSchema",
     }
 )
 
-/**
- * Recursively replaces specific icon properties in the provided data structure with overrides
- * based on the given issueStyles object. Supports strings, arrays, and objects.
- *
- * @param {string|Array|Object} data - The data to process. Can be a string, an array, or an object.
- * @param {Object} issueStyles - An object containing the icon properties to replace.
- * @param {string} issueStyles.iconPropertyError - The icon property to replace for errors.
- * @param {string} issueStyles.iconPropertyMissing - The icon property to replace for missing values.
- * @returns {string|Array|Object} - The processed data with replaced icon properties.
- */
-const replaceIcons = (data, issueStyles) => {
-    if (typeof data === 'string') {
-        return data
-            .replaceAll(issueStyles.iconPropertyError, issueStylesOverride.iconPropertyError)
-            .replaceAll(issueStyles.iconPropertyMissing, issueStylesOverride.iconPropertyMissing);
-    } else if (Array.isArray(data)) {
-        return data.map(item => replaceIcons(item, issueStyles));
-    } else if (typeof data === 'object' && data !== null) {
-        return Object.fromEntries(
-            Object.entries(data).map(([key, value]) => [key, replaceIcons(value, issueStyles)])
-        );
-    }
-    return data;
-};
 
 /**
  * Logs the validation result and throws an error if the response body is not valid against the schema, otherwise logs a success message.
@@ -138,18 +121,18 @@ const replaceIcons = (data, issueStyles) => {
  * @param {object} validationResults - An object containing:
  * @param {Array} validationResults.errors - An array of validation errors, or null if the data is valid against the schema.
  * @param {object} validationResults.dataMismatches - The original response data with all schema mismatches flagged directly.
- * @param {object} validationResults.issueStyles - An object with the icons and HEX colors used to flag the issues. Includes the properties: iconPropertyError, and iconPropertyMissing.
- * @param {Array} validationResults.issueStyles.iconPropertyError - The icon used to flag the property error.
- * @param {Array} validationResults.issueStyles.iconPropertyMissing - The icon used to flag the missing property.
+ * @param {object} validationResults.issuesStyles - An object with the icons and HEX colors used to flag the issues.
+ * @param {string} validationResults.issuesStyles.iconPropertyError - The icon used to flag the property error.
+ * @param {string} validationResults.issuesStyles.iconPropertyMissing - The icon used to flag the missing property.
+ * @param {string} validationResults.issuesStyles.colorPropertyError - The HEX color used to flag the property error.
+ * @param {string} validationResults.issuesStyles.colorPropertyMissing - The HEX color used to flag the missing property.
  * @param {integer} [maxErrorsToShow=10] - The maximum number of errors to show in the log.
  * 
  * @throws {Error} - If the response body is not valid against the schema.
   */
-const _logValidationResult = (data, validationResults, maxErrorsToShow = 10) => {
+const _logValidationResult = (data, validationResults, issuesStyles, maxErrorsToShow = 10) => {
 
-    let { errors, dataMismatches, issueStyles } = validationResults
-
-    dataMismatches = replaceIcons(dataMismatches, issueStyles);
+    let { errors, dataMismatches } = validationResults
 
     if (!errors) {
         // PASSED
@@ -182,7 +165,7 @@ const _logValidationResult = (data, validationResults, maxErrorsToShow = 10) => 
             }
         }
 
-        const { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issueStylesOverride
+        const { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issuesStyles
 
         if (cy_api_type === "filip") {
             // Filip's API View needs it's own processing to show the mismatches (similar logic as for package core-ajv-schema-validator)
@@ -206,7 +189,7 @@ const _logValidationResult = (data, validationResults, maxErrorsToShow = 10) => 
 
                 if (enableMismatchesOnUI && $elem && $elem.length) {
                     // Show in the API View the data with the mismatches
-                    showDataMismatchesApiViewFilip($elem, instancePathArray, errorDescription, error, 0)
+                    showDataMismatchesApiViewFilip($elem, instancePathArray, errorDescription, error, issuesStyles, 0)
                 }
             })
         }
@@ -216,7 +199,7 @@ const _logValidationResult = (data, validationResults, maxErrorsToShow = 10) => 
             if (cy_api_type === "filip") {
                 $original.replaceWith($cloned)
             } else if (cy_api_type === "gleb") {
-                $original.replaceWith(Cypress.$(transformDataToHtmlGleb(dataMismatches)))
+                $original.replaceWith(Cypress.$(transformDataToHtmlGleb(dataMismatches, issuesStyles)))
             }
         }
 
@@ -274,11 +257,12 @@ const _logValidationResult = (data, validationResults, maxErrorsToShow = 10) => 
  * Transforms a JSON object into an HTML string with syntax highlighting and custom styles for specific properties.
  *
  * @param {Object} jsonObject - The JSON object to be transformed into HTML.
-
+ * @param {Object} issuesStyles - An object with the icons and HEX colors used to flag the issues. Constains: iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing.
+ * 
  * @returns {string} - An HTML string with syntax-highlighted JSON and custom styles applied.
  */
-const transformDataToHtmlGleb = (jsonObject) => {
-    const { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issueStylesOverride
+const transformDataToHtmlGleb = (jsonObject, issuesStyles) => {
+    const { iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing } = issuesStyles
 
     const fontStyles = `font-weight: bold; font-size: 1.3em;`
     let jsonString = JSON.stringify(jsonObject, null, 4)
@@ -308,10 +292,11 @@ const transformDataToHtmlGleb = (jsonObject) => {
  * @param {string[]} instancePathArray - An array representing the path to the current data point in the JSON structure.
  * @param {string} errorDescription - A description of the error to display.
  * @param {Object} error - The error object containing details about the validation error.
+ * @param {Object} issuesStyles - An object with the icons and HEX colors used to flag the issues.. Constains: iconPropertyError, colorPropertyError, iconPropertyMissing, colorPropertyMissing.
  * @param {number} depth - The current depth of recursion, used for indentation and styling.
  */
-const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescription, error, depth) => {
-    const { colorPropertyError, colorPropertyMissing } = issueStylesOverride
+const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescription, error, issuesStyles, depth) => {
+    const { colorPropertyError, iconPropertyError, colorPropertyMissing } = issuesStyles
 
     const fontStyles = `font-weight: bold; font-size: 1.3em;`
     let path0 = instancePathArray.shift()
@@ -321,9 +306,9 @@ const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescri
         const $elem = $content.siblings(`details`).eq(parseInt(path0))
 
         if ($elem.length === 0) {
-            Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: ${colorPropertyError};">👉 Array ${error.message} </span>`).insertAfter($content.parent().next())
+            Cypress.$(`<span style="${fontStyles} padding-left: 15px; color: ${colorPropertyError};">${iconPropertyError} Array ${error.message} </span>`).insertAfter($content.parent().next())
         } else {
-            showDataMismatchesApiViewFilip($elem.children('summary'), instancePathArray, errorDescription, error, depth + 1)
+            showDataMismatchesApiViewFilip($elem.children('summary'), instancePathArray, errorDescription, error, issuesStyles, depth + 1)
         }
     }
     else if ($content.hasClass('brace')) {
@@ -341,7 +326,7 @@ const showDataMismatchesApiViewFilip = ($content, instancePathArray, errorDescri
                 $value = $value.children('summary')
             }
 
-            showDataMismatchesApiViewFilip($value, instancePathArray, errorDescription, error, depth + 1)
+            showDataMismatchesApiViewFilip($value, instancePathArray, errorDescription, error, issuesStyles, depth + 1)
         }
     } else {
         // Error in a property
