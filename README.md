@@ -82,16 +82,8 @@ npm install -D cypress-ajv-schema-validator
 
 - Add the following lines either to your `cypress/support/commands.js` to include the custom command and function globally, or directly in the test file that will host the schema validation tests:
 
-  **For `cy.validateSchema()` Custom Command**
-
   ```js
   import 'cypress-ajv-schema-validator';
-  ```
-
-  **For `validateSchema()` Function**
-
-  ```js
-  import validateSchema from 'cypress-ajv-schema-validator';
   ```
 
 - To **disable schema validation** even when the `cy.validateSchema()` command is present in the test, set the Cypress environment variable `disableSchemaValidation` to `true`. By default, schema validation is enabled.
