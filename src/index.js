@@ -16,7 +16,7 @@ const iconMoreErrors = '➕'
 
 const issuesStylesDefault = {
     iconPropertyError: '⚠️',
-    colorPropertyError: '#ee930a',
+    colorPropertyError: '#d67e09',
     iconPropertyMissing: '❌',
     colorPropertyMissing: '#c10000'
 }
