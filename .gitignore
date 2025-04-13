@@ -6,9 +6,6 @@
 # Node.js dependencies
 /node_modules/
 
-# Doc videos
-/videos/
-
 # Editor-specific files
 /.vscode/
 /.idea/
