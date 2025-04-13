@@ -250,7 +250,11 @@ Thank you for your support!
 
 ## Changelog
 
+### [2.0.1]
+- Fix dependency issue with `core-ajv-schema-validator`.
+
 ### [2.0.0]
+- Use of the plugin `core-ajv-schema-validator`.
 - Remove public API function **`validateSchema()`**. The function `validateSchema()` is now available in the plugin `core-ajv-schema-validator`.
 - Change in the icons for property error 😱, and property missing 😡.
 
