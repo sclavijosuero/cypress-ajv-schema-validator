@@ -1,10 +1,14 @@
 # cypress-ajv-schema-validator
 
-A Cypress plugin for API schema validation against plain JSON schemas, Swagger schema documents, or OpenAPI schema documents, leveraging the core-ajv-schema-validator powered by the Ajv JSON Schema Validator..
+A Cypress plugin for API schema validation against **plain JSON schemas**, **Swagger schema documents**, or **OpenAPI schema documents**.
+
+> 🚀🚀🚀 **IMPORTANT NOTE: The `cypress-ajv_schema-validator` plugin is now considered legacy and is being replaced by the new `cypress-schema-validator`.
+> The new `cypress-schema-validator` plugin is fully backward compatible with `cypress-ajv_schema-validator` and extends its API to support Zod schema validation in addition to AJV schema validation. 
+> You can find the new plugin at https://www.npmjs.com/package/cypress-schema-validator
 
 ![Overview](videos/overview.gif) 
 
-For a detailed guide on setting up and using this plugin to maximize its benefits, please refer to my articles:
+For a detailed guide on setting up and using `cypress-ajv_schema-validator` plugin to maximize its benefits, please refer to my articles:
   - ["CYPRESS-AJV-SCHEMA-VALIDATOR Plugin: The Brave Vigilante for Your API Contracts"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-plugin-the-brave-vigilante-for-your-api-contracts-5cfe)
   - ["CYPRESS-AJV-SCHEMA-VALIDATOR v1.2.0: Boost Debugging Skills from Vigilante to Superhero with Advanced Schema Error Insights!"](https://dev.to/sebastianclavijo/cypress-ajv-schema-validator-v120-boost-debugging-skills-from-vigilante-to-superhero-with-advanced-schema-error-insights-1hld)
 
@@ -249,6 +253,9 @@ Thank you for your support!
 
 
 ## Changelog
+
+### [2.0.2]
+- Update plugin description in README.md to mark as legacy plugin (check new plugin ["cypress-schema-validator"](https://www.npmjs.com/package/cypress-schema-validator))
 
 ### [2.0.1]
 - Fix dependency issue with `core-ajv-schema-validator`.
