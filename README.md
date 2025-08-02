@@ -2,9 +2,13 @@
 
 A Cypress plugin for API schema validation against **plain JSON schemas**, **Swagger schema documents**, or **OpenAPI schema documents**.
 
+&nbsp; 
+
 > 🚀🚀🚀 **IMPORTANT NOTE: The `cypress-ajv_schema-validator` plugin is now considered legacy and is being replaced by the new `cypress-schema-validator`.
 > The new `cypress-schema-validator` plugin is fully backward compatible with `cypress-ajv_schema-validator` and extends its API to support Zod schema validation in addition to AJV schema validation. 
 > You can find the new plugin at https://www.npmjs.com/package/cypress-schema-validator.**
+
+&nbsp; 
 
 ![Overview](videos/overview.gif) 
 
@@ -310,5 +314,6 @@ Thank you for your support!
 - [json-schema.org](https://json-schema.org/ "https://json-schema.org/") - Website [JSON Schema Tooling](https://json-schema.org/tools?query=&sortBy=name&sortOrder=ascending&groupBy=toolingTypes&licenses=&languages=&drafts=&toolingTypes=#json-schema-tooling "JSON Schema Tooling")
 
 - [cypress.io](https://www.cypress.io/ "https://www.cypress.io/") - Blog [Elevate Your Cypress Testing: Top 10 Essential Plugins](https://www.cypress.io/blog/elevate-your-cypress-testing-top-10-essential-plugins "Elevate Your Cypress Testing: Top 10 Essential Plugins")
+
 
 
